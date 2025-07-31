@@ -43,71 +43,71 @@
 
 :root {
 	--radius: 0.625rem;
-	--background: oklch(1 0 0);
-	--foreground: oklch(0.145 0 0);
+	--background: oklch(0.99 0 0);
+	--foreground: oklch(0.09 0 0);
 	--card: oklch(1 0 0);
-	--card-foreground: oklch(0.145 0 0);
+	--card-foreground: oklch(0.09 0 0);
 	--popover: oklch(1 0 0);
-	--popover-foreground: oklch(0.145 0 0);
-	--primary: oklch(0.205 0 0);
+	--popover-foreground: oklch(0.09 0 0);
+	--primary: oklch(0.55 0.13 200);
 	--primary-foreground: oklch(0.985 0 0);
-	--secondary: oklch(0.97 0 0);
-	--secondary-foreground: oklch(0.205 0 0);
-	--muted: oklch(0.97 0 0);
-	--muted-foreground: oklch(0.556 0 0);
-	--accent: oklch(0.97 0 0);
-	--accent-foreground: oklch(0.205 0 0);
+	--secondary: oklch(0.94 0.01 200);
+	--secondary-foreground: oklch(0.15 0 0);
+	--muted: oklch(0.95 0.005 200);
+	--muted-foreground: oklch(0.45 0.004 200);
+	--accent: oklch(0.94 0.01 200);
+	--accent-foreground: oklch(0.15 0 0);
 	--destructive: oklch(0.577 0.245 27.325);
-	--border: oklch(0.922 0 0);
-	--input: oklch(0.922 0 0);
-	--ring: oklch(0.708 0 0);
+	--border: oklch(0.89 0.005 200);
+	--input: oklch(0.89 0.005 200);
+	--ring: oklch(0.55 0.13 200);
 	--chart-1: oklch(0.646 0.222 41.116);
 	--chart-2: oklch(0.6 0.118 184.704);
 	--chart-3: oklch(0.398 0.07 227.392);
 	--chart-4: oklch(0.828 0.189 84.429);
 	--chart-5: oklch(0.769 0.188 70.08);
-	--sidebar: oklch(0.985 0 0);
-	--sidebar-foreground: oklch(0.145 0 0);
-	--sidebar-primary: oklch(0.205 0 0);
+	--sidebar: oklch(0.97 0.01 200);
+	--sidebar-foreground: oklch(0.15 0.015 200);
+	--sidebar-primary: oklch(0.55 0.13 200);
 	--sidebar-primary-foreground: oklch(0.985 0 0);
-	--sidebar-accent: oklch(0.97 0 0);
-	--sidebar-accent-foreground: oklch(0.205 0 0);
-	--sidebar-border: oklch(0.922 0 0);
-	--sidebar-ring: oklch(0.708 0 0);
+	--sidebar-accent: oklch(0.9 0.02 200);
+	--sidebar-accent-foreground: oklch(0.1 0.02 200);
+	--sidebar-border: oklch(0.86 0.015 200);
+	--sidebar-ring: oklch(0.55 0.13 200);
 }
 
 .dark {
-	--background: oklch(0.145 0 0);
-	--foreground: oklch(0.985 0 0);
-	--card: oklch(0.205 0 0);
-	--card-foreground: oklch(0.985 0 0);
-	--popover: oklch(0.205 0 0);
-	--popover-foreground: oklch(0.985 0 0);
-	--primary: oklch(0.922 0 0);
-	--primary-foreground: oklch(0.205 0 0);
-	--secondary: oklch(0.269 0 0);
-	--secondary-foreground: oklch(0.985 0 0);
-	--muted: oklch(0.269 0 0);
-	--muted-foreground: oklch(0.708 0 0);
-	--accent: oklch(0.269 0 0);
-	--accent-foreground: oklch(0.985 0 0);
+	--background: oklch(0.09 0.005 200);
+	--foreground: oklch(0.95 0.005 200);
+	--card: oklch(0.13 0.01 200);
+	--card-foreground: oklch(0.95 0.005 200);
+	--popover: oklch(0.13 0.01 200);
+	--popover-foreground: oklch(0.95 0.005 200);
+	--primary: oklch(0.65 0.15 200);
+	--primary-foreground: oklch(0.09 0.005 200);
+	--secondary: oklch(0.18 0.015 200);
+	--secondary-foreground: oklch(0.95 0.005 200);
+	--muted: oklch(0.18 0.015 200);
+	--muted-foreground: oklch(0.65 0.01 200);
+	--accent: oklch(0.18 0.015 200);
+	--accent-foreground: oklch(0.95 0.005 200);
 	--destructive: oklch(0.704 0.191 22.216);
-	--border: oklch(1 0 0 / 10%);
-	--input: oklch(1 0 0 / 15%);
-	--ring: oklch(0.556 0 0);
+	--border: oklch(0.22 0.02 200);
+	--input: oklch(0.22 0.02 200);
+	--ring: oklch(0.65 0.15 200);
 	--chart-1: oklch(0.488 0.243 264.376);
 	--chart-2: oklch(0.696 0.17 162.48);
 	--chart-3: oklch(0.769 0.188 70.08);
 	--chart-4: oklch(0.627 0.265 303.9);
 	--chart-5: oklch(0.645 0.246 16.439);
-	--sidebar: oklch(0.205 0 0);
-	--sidebar-foreground: oklch(0.985 0 0);
-	--sidebar-primary: oklch(0.488 0.243 264.376);
-	--sidebar-primary-foreground: oklch(0.985 0 0);
-	--sidebar-accent: oklch(0.269 0 0);
-	--sidebar-accent-foreground: oklch(0.985 0 0);
-	--sidebar-border: oklch(1 0 0 / 10%);
-	--sidebar-ring: oklch(0.556 0 0);
+	--sidebar: oklch(0.11 0.01 200);
+	--sidebar-foreground: oklch(0.9 0.005 200);
+	--sidebar-primary: oklch(0.65 0.15 200);
+	--sidebar-primary-foreground: oklch(0.09 0.005 200);
+	--sidebar-accent: oklch(0.2 0.02 200);
+	--sidebar-accent-foreground: oklch(0.95 0.005 200);
+	--sidebar-border: oklch(0.22 0.02 200);
+	--sidebar-ring: oklch(0.65 0.15 200);
 }
 
 @layer base {
@@ -116,5 +116,72 @@
 	}
 	body {
 		@apply bg-background text-foreground;
+	}
+}
+
+@layer components {
+	/* Dashboard content styling */
+	.dashboard-content {
+		@apply p-6 space-y-6;
+	}
+
+	.dashboard-card {
+		@apply bg-card text-card-foreground rounded-lg border shadow-sm p-6 hover:shadow-md transition-shadow duration-200;
+	}
+
+	.dashboard-section {
+		@apply space-y-4;
+	}
+
+	.dashboard-title {
+		@apply text-2xl font-bold tracking-tight;
+	}
+
+	.dashboard-subtitle {
+		@apply text-muted-foreground;
+	}
+
+	/* Enhanced button styles matching homepage */
+	.btn-primary {
+		@apply bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm transition-all duration-300 hover:scale-105;
+	}
+
+	.btn-secondary {
+		@apply bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm transition-all duration-300;
+	}
+
+	/* Cyan theme buttons to match homepage exactly */
+	.btn-cyan {
+		@apply bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl;
+	}
+
+	.btn-cyan-outline {
+		@apply border-2 border-cyan-600 text-cyan-600 hover:bg-cyan-600 hover:text-white transition-all duration-300 px-4 py-2 rounded-lg font-semibold;
+	}
+
+	.btn-cyan-ghost {
+		@apply border-2 border-white text-white hover:bg-white hover:text-gray-900 px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 backdrop-blur-sm;
+	}
+
+	/* Status badges */
+	.status-badge {
+		@apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+	}
+
+	.status-badge-success {
+		@apply bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400;
+	}
+
+	.status-badge-warning {
+		@apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400;
+	}
+
+	.status-badge-info {
+		@apply bg-cyan-100 text-cyan-800 dark:bg-cyan-900/20 dark:text-cyan-400;
+	}
+
+	/* Dashboard specific gradients */
+	.gradient-cyan {
+		@apply bg-gradient-to-br from-cyan-50 to-cyan-100 dark:from-cyan-950/20 dark:to-cyan-900/20;
 	}
 }

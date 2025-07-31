@@ -20,12 +20,13 @@ export interface LoginCredentials {
 
 export interface AuthResponse {
 	token: string;
+	user: User;
 }
 
 export interface RegisterCredentials {
 	name: string;
 	email: string;
 	password: string;
-	role?: "tenant" | "landload" | "admin";
+	role: "tenant" | "landlord";
 	avatar?: string;
 }

@@ -62,7 +62,7 @@ export const useLogin = () => {
 		},
 		onSuccess: (data) => {
 			const token = data.token;
-			dispatch(loginSuccess({ user: null, token }));
+			dispatch(loginSuccess({ user: data.user, token }));
 			queryClient.invalidateQueries({ queryKey: QUERY_KEYS.user.profile });
 		},
 		onError: () => {
@@ -82,7 +82,7 @@ export const useRegister = () => {
 		},
 		onSuccess: (data) => {
 			const token = data.token;
-			dispatch(loginSuccess({ user: null, token }));
+			dispatch(loginSuccess({ user: data.user, token }));
 			queryClient.invalidateQueries({ queryKey: QUERY_KEYS.user.profile });
 		},
 		onError: () => {
