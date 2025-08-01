@@ -3,36 +3,67 @@ import { MdChatBubbleOutline, MdNotificationsActive } from "react-icons/md";
 import { Button } from "../ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useState } from "react";
 
 const Navbar = () => {
 	const { isAuthenticated, user } = useAuth();
+	const [active, setActive] = useState<string>("");
+
+	const handleActive = (path: string) => {
+		console.log(path);
+		setActive(path);
+	};
+
 	return (
 		<nav className="fixed top-0 left-0 right-0 w-full z-50 backdrop-blur-xl bg-black/80 border-b border-white/10 shadow-lg shadow-black/20">
 			<div className="flex justify-between items-center px-6 py-4 max-w-8xl mx-auto">
 				<h1 className="text-2xl font-bold text-white">
-					<span className="text-cyan-600">Urban</span>Nest
+					<Link to="/home">
+						<span className="text-cyan-600">Urban</span>Nest
+					</Link>
 				</h1>
 
 				<div className="flex items-center gap-8">
 					<Link
 						to="/"
-						className="text-white font-medium hover:text-cyan-600 transition-colors duration-300 relative group"
+						className={` font-medium hover:text-cyan-600 transition-colors duration-300 relative group ${
+							active === "/" || active === "/home"
+								? "text-cyan-400"
+								: "text-white"
+						}`}
+						onClick={() => handleActive("/")}
 					>
-						Rental
+						Home
 						<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-600 transition-all duration-300 group-hover:w-full"></span>
 					</Link>
 					<Link
-						to="/listing"
-						className="text-white font-medium hover:text-cyan-600 transition-colors duration-300 relative group"
+						to="/deals"
+						className={` font-medium hover:text-cyan-600 transition-colors duration-300 relative group ${
+							active === "/deals" ? "text-cyan-400" : "text-white"
+						}`}
+						onClick={() => handleActive("/deals")}
 					>
-						Listing
+						Deals
 						<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-600 transition-all duration-300 group-hover:w-full"></span>
 					</Link>
 					<Link
-						to="/explore"
-						className="text-white font-medium hover:text-cyan-600 transition-colors duration-300 relative group"
+						to="/search"
+						className={` font-medium hover:text-cyan-600 transition-colors duration-300 relative group ${
+							active === "/search" ? "text-cyan-400" : "text-white"
+						}`}
+						onClick={() => handleActive("/search")}
 					>
 						Explore
+						<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-600 transition-all duration-300 group-hover:w-full"></span>
+					</Link>
+					<Link
+						to="/support"
+						className={` font-medium hover:text-cyan-600 transition-colors duration-300 relative group ${
+							active === "/support" ? "text-cyan-400" : "text-white"
+						}`}
+						onClick={() => handleActive("/support")}
+					>
+						Support
 						<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-600 transition-all duration-300 group-hover:w-full"></span>
 					</Link>
 				</div>

@@ -32,7 +32,7 @@ const API_ENDPOINTS = {
 		GET_BY_ID: (id: string) => `${API_BASE_URL}/properties/get-by-id/${id}`,
 		UPDATE: (id: string) => `${API_BASE_URL}/properties/update/${id}`,
 		DELETE: (id: string) => `${API_BASE_URL}/properties/delete/${id}`,
-		SEARCH: `${API_BASE_URL}/properties/search`,
+		SEARCH: (query: string) => `${API_BASE_URL}/properties/search?${query}`,
 		AI_SEARCH: `${API_BASE_URL}/properties/ai-search`,
 		UPLOAD_IMAGE: `${API_BASE_URL}/properties/upload/image`,
 		UPLOAD_VIDEO: `${API_BASE_URL}/properties/upload/video`,

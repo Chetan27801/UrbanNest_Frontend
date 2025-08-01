@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import Navbar from "@/components/common/Navbar";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -18,13 +17,9 @@ import {
 	ShieldCheckIcon,
 } from "lucide-react";
 
-import Footer from "@/components/common/Footer";
-
 const HomePage = () => {
 	return (
 		<div className="min-h-screen">
-			<Navbar />
-
 			{/* Hero Section */}
 			<section className="relative h-screen w-full flex items-center justify-center">
 				{/* Background Image with Overlay */}
@@ -595,9 +590,6 @@ const HomePage = () => {
 					</div>
 				</div>
 			</section>
-
-			{/* Footer */}
-			<Footer />
 		</div>
 	);
 };

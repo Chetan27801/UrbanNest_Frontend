@@ -1,11 +1,19 @@
 import {
+	Building2Icon,
+	BuildingIcon,
 	CreditCardIcon,
 	DollarSignIcon,
-	HeartIcon,
 	HomeIcon,
+	EyeIcon,
+	HeartIcon,
 	Monitor,
+	PawPrintIcon,
 	SettingsIcon,
+	TreesIcon,
+	TvIcon,
 	UsersIcon,
+	WifiIcon,
+	CarIcon,
 } from "lucide-react";
 
 //Admin
@@ -135,4 +143,30 @@ const LANDLORD_DASHBOARD_LIST = [
 	},
 ];
 
-export { ADMIN_DASHBOARD_LIST, TENANT_DASHBOARD_LIST, LANDLORD_DASHBOARD_LIST };
+const propertyTypes = [
+	{ id: "rooms", label: "Rooms", icon: HomeIcon },
+	{ id: "apartment", label: "Apartment", icon: BuildingIcon },
+	{ id: "tinyhouse", label: "Tinyhouse", icon: HomeIcon },
+	{ id: "townhouse", label: "Townhouse", icon: Building2Icon },
+	{ id: "villa", label: "Villa", icon: HomeIcon },
+	{ id: "cottage", label: "Cottage", icon: HomeIcon },
+];
+
+const conveniences = [
+	{ id: "tv", label: "TV", icon: TvIcon },
+	{ id: "disabled", label: "Disabled Access", icon: CarIcon },
+	{ id: "woods", label: "In the woods", icon: TreesIcon },
+	{ id: "views", label: "Views", icon: EyeIcon },
+	{ id: "hottubs", label: "Hot Tubs", icon: HomeIcon },
+	{ id: "lake", label: "Lake & Rivers", icon: HomeIcon },
+	{ id: "petfriendly", label: "Pet Friendly", icon: PawPrintIcon },
+	{ id: "wifi", label: "Wifi", icon: WifiIcon },
+];
+
+export {
+	ADMIN_DASHBOARD_LIST,
+	TENANT_DASHBOARD_LIST,
+	LANDLORD_DASHBOARD_LIST,
+	propertyTypes,
+	conveniences,
+};
