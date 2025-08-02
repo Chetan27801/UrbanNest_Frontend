@@ -1,0 +1,51 @@
+import { Card, CardHeader, CardTitle, CardDescription } from "../ui/card";
+import { Separator } from "../ui/separator";
+import { FaHeart, FaStar } from "react-icons/fa";
+import { BedIcon, BathIcon } from "lucide-react";
+import { FaSwimmingPool } from "react-icons/fa";
+const PropertyCard = () => {
+	return (
+		<Card className="w-auto h-auto flex flex-col gap-2">
+			<CardHeader>
+				<div className="flex flex-col gap-2">
+					<div className="relative">
+						<img
+							src="https://plus.unsplash.com/premium_photo-1661883982941-50af7720a6ff?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+							alt="Property Image"
+							className="w-full h-48 object-cover rounded-lg"
+						/>
+						<div className="absolute top-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-all duration-300 cursor-pointer">
+							<FaHeart className="text-red-500" />
+						</div>
+					</div>
+					<CardTitle>Property Title</CardTitle>
+					<CardDescription>Address</CardDescription>
+					<div className="flex flex-row justify-between gap-2">
+						<div className="flex flex-row items-center gap-2">
+							<FaStar />
+							<span>4.5</span>
+						</div>
+						<span>Price</span>
+					</div>
+					<Separator />
+					<div className="flex flex-row gap-2 items-center justify-between text-sm mx-auto w-full">
+						<div className="flex flex-row gap-2">
+							<BedIcon />
+							<span>3 Beds</span>
+						</div>
+						<div className="flex flex-row gap-2">
+							<BathIcon />
+							<span>2 Baths</span>
+						</div>
+						<div className="flex flex-row gap-2">
+							<FaSwimmingPool />
+							<span>Pool</span>
+						</div>
+					</div>
+				</div>
+			</CardHeader>
+		</Card>
+	);
+};
+
+export default PropertyCard;

@@ -12,9 +12,18 @@ import {
 	TreesIcon,
 	TvIcon,
 	UsersIcon,
-	WifiIcon,
 	CarIcon,
 } from "lucide-react";
+
+import { FaSwimmingPool } from "react-icons/fa";
+import { MdOutlineMicrowave, MdOutlinePets } from "react-icons/md";
+import { BiCloset, BiSolidWasher } from "react-icons/bi";
+import { TbAirConditioning, TbWashEco, TbFridge } from "react-icons/tb";
+import { CiWifiOn } from "react-icons/ci";
+import { LucideCircleParking } from "lucide-react";
+import { CgGym } from "react-icons/cg";
+import { GiWoodenPier } from "react-icons/gi";
+import { IoCellular } from "react-icons/io5";
 
 //Admin
 import AdminUser from "@/components/dashboard/Admin/AdminUser";
@@ -160,8 +169,25 @@ const conveniences = [
 	{ id: "hottubs", label: "Hot Tubs", icon: HomeIcon },
 	{ id: "lake", label: "Lake & Rivers", icon: HomeIcon },
 	{ id: "petfriendly", label: "Pet Friendly", icon: PawPrintIcon },
-	{ id: "wifi", label: "Wifi", icon: WifiIcon },
+	{ id: "wifi", label: "Wifi", icon: CiWifiOn },
 ];
+
+const amenities = [
+	{ id: "wifi", label: "Wifi", icon: CiWifiOn },
+	{ id: "internet", label: "Internet", icon: IoCellular },
+	{ id: "airconditioning", label: "Air Conditioning", icon: TbAirConditioning },
+	{ id: "gym", label: "Gym", icon: CgGym },
+	{ id: "hardwoodfloors", label: "Hardwood Floors", icon: GiWoodenPier },
+	{ id: "pool", label: "Pool", icon: FaSwimmingPool },
+	{ id: "parking", label: "Parking", icon: LucideCircleParking },
+	{ id: "microwave", label: "Microwave", icon: MdOutlineMicrowave },
+	{ id: "dishwasher", label: "Dishwasher", icon: TbWashEco },
+	{ id: "refrigerator", label: "Refrigerator", icon: TbFridge },
+	{ id: "petsallowed", label: "Pets Allowed", icon: MdOutlinePets },
+	{ id: "washerdryer", label: "Washer & Dryer", icon: BiSolidWasher },
+	{ id: "walkinclosets", label: "Walk-in Closets", icon: BiCloset },
+];
+
 
 export {
 	ADMIN_DASHBOARD_LIST,
@@ -169,4 +195,5 @@ export {
 	LANDLORD_DASHBOARD_LIST,
 	propertyTypes,
 	conveniences,
+	amenities,
 };

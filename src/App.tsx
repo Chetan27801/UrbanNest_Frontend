@@ -9,11 +9,13 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import HomePage from "./pages/public/HomePage";
 import Dashboard from "./components/dashboard/Dashboard";
-import SearchPage from "./pages/public/SearchPage";
+import TempSearchPage from "./pages/public/TempSearchPage";
 import Support from "./pages/public/Support";
 import DealsPage from "./pages/public/DealsPage";
 import NavbarLayout from "./components/layouts/NavbarLayout";
 import FooterLayout from "./components/layouts/FooterLayout";
+import SearchPage from "./pages/public/SearchPage";
+import "leaflet/dist/leaflet.css";
 
 function App() {
 	return (
@@ -29,9 +31,10 @@ function App() {
 						<Route path="/" element={<Navigate to="/home" />} />
 						<Route path="/home" element={<HomePage />} />
 						<Route path="/dashboard" element={<Dashboard />} />
-						<Route path="/search" element={<SearchPage />} />
+						<Route path="/search" element={<TempSearchPage />} />
 						<Route path="/support" element={<Support />} />
 						<Route path="/deals" element={<DealsPage />} />
+						<Route path="/temp-search" element={<SearchPage />} />
 					</Route>
 				</Route>
 			</Routes>
