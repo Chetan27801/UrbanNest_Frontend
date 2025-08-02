@@ -1,8 +1,15 @@
 import { cn } from "@/lib/utils";
 import { Card, CardHeader, CardTitle, CardDescription } from "../ui/card";
 import PropertyCard from "./PropertyCard";
+import type { Property } from "@/types/property";
 
-const PropertyListings = ({ className }: { className: string }) => {
+const PropertyListings = ({
+	className,
+	properties,
+}: {
+	className: string;
+	properties: Property[];
+}) => {
 	return (
 		<div className={cn("flex flex-col gap-4", className)}>
 			<Card>
@@ -13,9 +20,10 @@ const PropertyListings = ({ className }: { className: string }) => {
 					</CardDescription>
 				</CardHeader>
 			</Card>
-			<PropertyCard />
-			<PropertyCard />
-			<PropertyCard />
+			{properties &&
+				properties.map((property) => (
+					<PropertyCard key={property.id} property={property} />
+				))}
 		</div>
 	);
 };

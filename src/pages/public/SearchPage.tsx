@@ -5,7 +5,7 @@ import LeftFilterSidebar from "@/components/common/LeftFilterSidebar";
 import MapView from "@/components/common/MapView";
 import PropertyListings from "@/components/common/PropertyListings";
 import { useSearchParams } from "react-router-dom";
-import type { newPropertySearchFilters } from "@/types/property";
+import type { newProperty, newPropertySearchFilters } from "@/types/property";
 import { Amenity, Highlight, PropertyType } from "@/utils/enums";
 import { usePropertySearch } from "@/services/propertyService";
 
@@ -36,13 +36,13 @@ const initialSearchFilters: newPropertySearchFilters = {
 	hasDishwasher: false,
 	amenities: [],
 	highlights: [],
+	moveInDate: undefined,
 };
 
 const SearchPage = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [searchFilters, setSearchFilters] =
 		useState<newPropertySearchFilters>(initialSearchFilters);
-	const { isLoading, data } = usePropertySearch(buildSearchQuery());
 	useEffect(() => {
 		setSearchFilters((prev) => ({
 			...prev,
@@ -72,6 +72,9 @@ const SearchPage = () => {
 			hasDishwasher: searchParams.get("hasDishwasher") === "true",
 			amenities: searchParams.get("amenities")?.split(",") as Amenity[],
 			highlights: searchParams.get("highlights")?.split(",") as Highlight[],
+			moveInDate: searchParams.get("moveInDate")
+				? new Date(searchParams.get("moveInDate")!)
+				: undefined,
 		}));
 	}, [searchParams]);
 
@@ -104,6 +107,7 @@ const SearchPage = () => {
 			hasDishwasher: searchFilters.hasDishwasher,
 			amenities: searchFilters.amenities,
 			highlights: searchFilters.highlights,
+			moveInDate: searchFilters.moveInDate,
 		};
 
 		const query = Object.fromEntries(
@@ -139,6 +143,12 @@ const SearchPage = () => {
 		);
 	};
 
+	const { data: properties, isLoading } = usePropertySearch(buildSearchQuery());
+
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
+
 	return (
 		<TooltipProvider>
 			<div className="flex flex-col h-screen bg-white overflow-hidden">
@@ -147,22 +157,33 @@ const SearchPage = () => {
 					handleFilter={handleFilter}
 					searchFilters={searchFilters}
 					updateSearchFilter={updateSearchFilter}
-					buildSearchQuery={buildSearchQuery}
 					handleApplyFilters={handleApplyFilters}
-					handleClearFilters={handleClearFilters}
 				/>
 
 				<div className="flex flex-row flex-1 gap-4 overflow-hidden">
 					{/* Sidebar (Left) */}
 					{isFilter && (
-						<LeftFilterSidebar className="w-1/4 lg:w-1/5 flex-shrink-0 overflow-y-auto" />
+						<LeftFilterSidebar
+							className="w-1/4 lg:w-1/5 flex-shrink-0 overflow-y-auto"
+							initialSearchFilters={initialSearchFilters}
+							handleClearFilters={handleClearFilters}
+							handleApplyFilters={handleApplyFilters}
+							updateSearchFilter={updateSearchFilter}
+						/>
 					)}
 
 					{/* Map View (Middle) */}
-					<MapView className="flex-1 min-w-0" isFilter={isFilter} />
+					<MapView
+						className="flex-1 min-w-0"
+						isFilter={isFilter}
+						properties={properties?.data.properties || ([] as newProperty[])}
+					/>
 
 					{/* Property List (Right) */}
-					<PropertyListings className="w-1/3 lg:w-1/4 flex-shrink-0 overflow-y-auto" />
+					<PropertyListings
+						className="w-1/3 lg:w-1/4 flex-shrink-0 overflow-y-auto"
+						properties={properties?.data.properties || ([] as newProperty[])}
+					/>
 				</div>
 			</div>
 		</TooltipProvider>

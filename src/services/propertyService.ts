@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import API_ENDPOINTS from "@/utils/apiConstant";
 import { api } from "@/utils/apiAxios";
 import { QUERY_KEYS } from "@/lib/queryClient";
@@ -57,8 +57,9 @@ export const usePropertySearch = (
 	enabled: boolean = true
 ) => {
 	return useQuery({
-		queryKey: QUERY_KEYS.properties.search(query.search),
+		queryKey: QUERY_KEYS.properties.searchByFilters(query),
 		queryFn: () => propertyApiFunctions.getPropertySearch(query),
+		placeholderData: keepPreviousData,
 		enabled,
 	});
 };

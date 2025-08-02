@@ -3,7 +3,10 @@ import { Separator } from "../ui/separator";
 import { FaHeart, FaStar } from "react-icons/fa";
 import { BedIcon, BathIcon } from "lucide-react";
 import { FaSwimmingPool } from "react-icons/fa";
-const PropertyCard = () => {
+import type { Property } from "@/types/property";
+import { Amenity } from "@/utils/enums";
+
+const PropertyCard = ({ property }: { property: Property }) => {
 	return (
 		<Card className="w-auto h-auto flex flex-col gap-2">
 			<CardHeader>
@@ -18,28 +21,28 @@ const PropertyCard = () => {
 							<FaHeart className="text-red-500" />
 						</div>
 					</div>
-					<CardTitle>Property Title</CardTitle>
-					<CardDescription>Address</CardDescription>
+					<CardTitle>{property.name}</CardTitle>
+					<CardDescription>{property.location.address}</CardDescription>
 					<div className="flex flex-row justify-between gap-2">
 						<div className="flex flex-row items-center gap-2">
 							<FaStar />
-							<span>4.5</span>
+							<span>{property.averageRating}</span>
 						</div>
-						<span>Price</span>
+						<span>₹{property.pricePerMonth}</span>
 					</div>
 					<Separator />
 					<div className="flex flex-row gap-2 items-center justify-between text-sm mx-auto w-full">
 						<div className="flex flex-row gap-2">
 							<BedIcon />
-							<span>3 Beds</span>
+							<span>{property.beds} Beds</span>
 						</div>
 						<div className="flex flex-row gap-2">
 							<BathIcon />
-							<span>2 Baths</span>
+							<span>{property.baths} Baths</span>
 						</div>
 						<div className="flex flex-row gap-2">
 							<FaSwimmingPool />
-							<span>Pool</span>
+							<span>{property.amenities.find((amenity) => amenity === Amenity.Pool)?.toString()}</span>
 						</div>
 					</div>
 				</div>

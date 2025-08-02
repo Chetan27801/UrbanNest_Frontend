@@ -1,57 +1,90 @@
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import type { LatLngExpression } from "leaflet";
 import { DivIcon, Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
-
-// Fix for a known issue with default marker icons in webpack
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import type { Property } from "@/types/property";
+import { useEffect } from "react";
 
+// Fix for default marker icons
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 delete (Icon.Default.prototype as any)._getIconUrl;
-
 Icon.Default.mergeOptions({
 	iconRetinaUrl: markerIcon2x,
 	iconUrl: markerIcon,
 	shadowUrl: markerShadow,
 });
 
-const MapView = ({
-	className,
-	isFilter,
-}: {
-	className: string;
-	isFilter: boolean;
-}) => {
-	// Set the initial position of the map
-	const position: LatLngExpression = [22.5726, 88.3639]; // Kolkata, India
-
-	const simplePropertyIcon = new DivIcon({
+const createPropertyIcon = (property: Property) => {
+	// ... (This helper function remains the same as the previous correct version)
+	return new DivIcon({
 		className: "simple-property-marker",
 		html: `
-			<div class="relative transform hover:scale-105 transition-all duration-200">
-				<div class="bg-gray-900 bg-opacity-95 backdrop-blur-sm rounded shadow-lg px-2 py-1.5 text-white min-w-max">
-					<div class="flex items-center space-x-1.5">
-						<!-- Small property image -->
-						<div class="w-6 h-6 bg-cover bg-center rounded flex-shrink-0" style="background-image: url('https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=24&h=24&fit=crop&crop=center');"></div>
-						<div class="text-left">
-							<div class="font-semibold text-xs">Cangu Villa</div>
-							<div class="text-xs text-gray-300">$200 night</div>
-						</div>
-					</div>
-				</div>
-				<div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0" style="border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 4px solid rgba(17, 24, 39, 0.95);"></div>
-			</div>
-		`,
+            <div class="relative transform hover:scale-105 transition-all duration-200">
+                <div class="bg-gray-900 bg-opacity-95 backdrop-blur-sm rounded shadow-lg px-2 py-1.5 text-white min-w-max">
+                    <div class="flex items-center space-x-1.5">
+                        <div class="w-6 h-6 bg-cover bg-center rounded flex-shrink-0" style="background-image: url('${
+													property.photoUrls[0] || ""
+												}');"></div>
+                        <div class="text-left">
+                            <div class="font-semibold text-xs">${
+															property.name
+														}</div>
+                            <div class="text-xs text-gray-300">₹${
+															property.pricePerMonth
+														}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0" style="border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 4px solid rgba(17, 24, 39, 0.95);"></div>
+            </div>
+        `,
 		iconSize: [120, 35],
 		iconAnchor: [60, 35],
 		popupAnchor: [0, -35],
 	});
+};
 
-	const selectedIcon = simplePropertyIcon;
+const MapUpdater = ({ properties }: { properties: Property[] }) => {
+	const map = useMap();
+	useEffect(() => {
+		if (properties && properties.length > 0) {
+			const bounds = properties.map(
+				(p) =>
+					[
+						p.location.coordinates.coordinates[0] as number,
+						p.location.coordinates.coordinates[1] as number,
+					] as [number, number]
+			);
+			map.fitBounds(bounds, { padding: [50, 50] }); // Add padding
+		}
+	}, []);
+	return null;
+};
+
+const MapView = ({
+	className,
+	isFilter,
+	properties,
+}: {
+	className: string;
+	isFilter: boolean;
+	properties: Property[];
+}) => {
+	const defaultCenter: LatLngExpression = [28.679079, 77.209006];
+
+	const validProperties =
+		properties?.filter(
+			(p) =>
+				p.location?.coordinates?.coordinates[0] != null &&
+				p.location?.coordinates?.coordinates[1] != null &&
+				p.location?.coordinates?.coordinates[0] != undefined &&
+				p.location?.coordinates?.coordinates[1] != undefined
+		) || [];
 
 	return (
 		<div
@@ -61,45 +94,40 @@ const MapView = ({
 				className
 			)}
 		>
-			{/* Add custom CSS for the markers */}
 			<style>{`
-				.property-card-marker {
-					background: transparent !important;
-					border: none !important;
-				}
-				.simple-property-marker {
-					background: transparent !important;
-					border: none !important;
-				}
-				.price-only-marker {
-					background: transparent !important;
-					border: none !important;
-				}
-			`}</style>
-
+                .simple-property-marker { background: transparent !important; border: none !important; }
+            `}</style>
 			<MapContainer
-				center={position}
+				center={defaultCenter}
 				zoom={13}
-				scrollWheelZoom={false}
+				scrollWheelZoom={true}
 				className="h-full w-full"
 			>
-				{/* TileLayer provides the map images from OpenStreetMap */}
 				<TileLayer
 					attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 				/>
 
-				{/* Custom styled marker */}
-				<Marker position={position} icon={selectedIcon}>
-					<Popup className="custom-popup">
-						<Link
-							to={`/property/${1}`}
-							className="text-blue-500 hover:text-cyan-600"
-						>
-							View Details
-						</Link>
-					</Popup>
-				</Marker>
+				{validProperties.map((property) => (
+					<Marker
+						key={property.id} // Add the required key prop
+						position={[
+							property.location.coordinates.coordinates[0] as number,
+							property.location.coordinates.coordinates[1] as number,
+						]}
+						icon={createPropertyIcon(property)}
+					>
+						<Popup className="custom-popup">
+							<Link
+								to={`/property/${property.id}`}
+								className="text-blue-500 hover:text-cyan-600"
+							>
+								View Details
+							</Link>
+						</Popup>
+					</Marker>
+				))}
+				<MapUpdater properties={validProperties} />
 			</MapContainer>
 		</div>
 	);

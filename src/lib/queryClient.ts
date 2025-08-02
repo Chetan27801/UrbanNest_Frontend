@@ -1,3 +1,4 @@
+import type { PropertySearchRequest } from "@/types/property";
 import { QueryClient } from "@tanstack/react-query";
 
 export const queryClient = new QueryClient({
@@ -28,7 +29,7 @@ export const QUERY_KEYS = {
 	properties: {
 		all: ["properties", "all"],
 		byId: (id: string) => ["properties", "by-id", id],
-		search: (query: string) => ["properties", "search", query],
+		searchByFilters: (filters: PropertySearchRequest) => ["properties", "search", filters],
 		aiSearch: (query: string) => ["properties", "ai-search", query],
 	},
 	applications: {

@@ -11,28 +11,33 @@ import { SelectDropDown } from "./SelectDropDown";
 import { PropertyType } from "@/utils/enums";
 import DatePicker from "./DatePicker";
 import { Separator } from "../ui/separator";
-import type { newPropertySearchFilters } from "@/types/property";
+import type { PropertySearchFilters } from "@/types/property";
+import { useEffect } from "react";
 
 const TopFilterSearch = ({
 	isFilter,
 	handleFilter,
 	searchFilters,
 	updateSearchFilter,
-	buildSearchQuery,
 	handleApplyFilters,
-	handleClearFilters,
 }: {
 	isFilter: boolean;
 	handleFilter: () => void;
-	searchFilters: newPropertySearchFilters;
-	updateSearchFilter: <K extends keyof newPropertySearchFilters>(
+	searchFilters: PropertySearchFilters;
+	updateSearchFilter: <K extends keyof PropertySearchFilters>(
 		key: K,
-		value: newPropertySearchFilters[K]
+		value: PropertySearchFilters[K]
 	) => void;
-	buildSearchQuery: () => Record<string, string>;
 	handleApplyFilters: () => void;
-	handleClearFilters: () => void;
 }) => {
+	//debounce the search filter
+	useEffect(() => {
+		const delayInputTimeout = setTimeout(() => {
+			handleApplyFilters();
+		}, 500);
+		return () => clearTimeout(delayInputTimeout);
+	}, [searchFilters.search, handleApplyFilters]);
+
 	return (
 		<div className="flex flex-row p-2 w-full items-center gap-2">
 			{/* Filter Button */}
@@ -51,7 +56,13 @@ const TopFilterSearch = ({
 
 			{/* Search Bar */}
 			<div className="flex flex-row justify-center p-4 relative w-80">
-				<Input type="text" placeholder="Search" />
+				<Input
+					type="text"
+					placeholder="Search"
+					value={searchFilters.search}
+					onChange={(e) => updateSearchFilter("search", e.target.value)}
+					className="focus-visible:ring-1"
+				/>
 				<SearchIcon className="w-4 h-4 absolute right-6 top-1/2 -translate-y-1/2 text-gray-500" />
 			</div>
 
@@ -60,9 +71,9 @@ const TopFilterSearch = ({
 				<SelectDropDown
 					field={{
 						onChange: (value: string) => {
-							console.log(value);
+							updateSearchFilter("minPrice", parseInt(value));
 						},
-						value: "",
+						value: searchFilters.minPrice?.toString() || "",
 					}}
 					options={[
 						{ label: "Under ₹15000", value: "under 15000" },
@@ -75,9 +86,9 @@ const TopFilterSearch = ({
 				<SelectDropDown
 					field={{
 						onChange: (value: string) => {
-							console.log(value);
+							updateSearchFilter("beds", parseInt(value));
 						},
-						value: "",
+						value: searchFilters.beds?.toString() || "",
 					}}
 					options={[
 						{ label: "1", value: "1" },
@@ -91,9 +102,9 @@ const TopFilterSearch = ({
 				<SelectDropDown
 					field={{
 						onChange: (value: string) => {
-							console.log(value);
+							updateSearchFilter("baths", parseInt(value));
 						},
-						value: "",
+						value: searchFilters.baths?.toString() || "",
 					}}
 					options={[
 						{ label: "1", value: "1" },
@@ -107,9 +118,9 @@ const TopFilterSearch = ({
 				<SelectDropDown
 					field={{
 						onChange: (value: string) => {
-							console.log(value);
+							updateSearchFilter("propertyType", value as PropertyType);
 						},
-						value: "",
+						value: searchFilters.propertyType || "",
 					}}
 					options={[
 						{ label: "Apartment", value: PropertyType.Apartment },
@@ -121,13 +132,17 @@ const TopFilterSearch = ({
 					]}
 					placeholder="Property Type"
 				/>
-				<DatePicker date={undefined} setDate={() => {}} label="Move In Date" />
+				<DatePicker
+					date={searchFilters.moveInDate}
+					setDate={(date) => updateSearchFilter("moveInDate", date)}
+					label="Move In Date"
+				/>
 				<SelectDropDown
 					field={{
 						onChange: (value: string) => {
-							console.log(value);
+							updateSearchFilter("sortBy", value);
 						},
-						value: "",
+						value: searchFilters.sortBy || "",
 					}}
 					options={[
 						{ label: "Price: Low to High", value: "pricelow" },
