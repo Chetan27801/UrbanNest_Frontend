@@ -1,8 +1,11 @@
+import ProfileForm from "@/components/forms/ProfileForm"
 
 
 const AdminSetting = () => {
   return (
-    <div>AdminSetting</div>
+    <div>
+      <ProfileForm />
+    </div>
   )
 }
 

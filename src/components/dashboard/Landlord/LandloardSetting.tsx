@@ -1,5 +1,11 @@
+import ProfileForm from "@/components/forms/ProfileForm";
+
 const LandloardSetting = () => {
-	return <div>LandloardSetting</div>;
+	return (
+		<div>
+			<ProfileForm />
+		</div>
+	);
 };
 
 export default LandloardSetting;

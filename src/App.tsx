@@ -8,7 +8,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import HomePage from "./pages/public/HomePage";
-import Dashboard from "./components/dashboard/Dashboard";
+import Dashboard from "./pages/dashboard/Dashboard";
 import Support from "./pages/public/Support";
 import DealsPage from "./pages/public/DealsPage";
 import NavbarLayout from "./components/layouts/NavbarLayout";
@@ -29,12 +29,13 @@ function App() {
 					<Route element={<FooterLayout />}>
 						<Route path="/" element={<Navigate to="/home" />} />
 						<Route path="/home" element={<HomePage />} />
-						<Route path="/dashboard" element={<Dashboard />} />
 						<Route path="/support" element={<Support />} />
 						<Route path="/deals" element={<DealsPage />} />
 						<Route path="/search" element={<SearchPage />} />
 					</Route>
 				</Route>
+
+				<Route path="/dashboard" element={<Dashboard />} />
 			</Routes>
 		</Router>
 	);

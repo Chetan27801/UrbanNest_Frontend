@@ -10,7 +10,6 @@ const Navbar = () => {
 	const [active, setActive] = useState<string>("");
 
 	const handleActive = (path: string) => {
-		console.log(path);
 		setActive(path);
 	};
 

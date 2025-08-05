@@ -11,6 +11,7 @@ const LandloardDashboard = () => {
 	const handleTabChange = (tab: string) => {
 		setActiveTab(tab);
 	};
+
 	return (
 		<SidebarLayout
 			menuItems={LANDLORD_DASHBOARD_LIST}

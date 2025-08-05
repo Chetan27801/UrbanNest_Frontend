@@ -23,12 +23,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, type RegisterFormData } from "@/schema/auth.schema";
 import { useRegister } from "@/services/authService";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
 
 const RegisterForm = () => {
+	const queryClient = useQueryClient();
 	const registerMutation = useRegister();
 	const [showPassword, setShowPassword] = useState(false);
+	const navigate = useNavigate();
 	const {
 		register,
 		handleSubmit,
@@ -41,10 +45,20 @@ const RegisterForm = () => {
 		},
 	});
 
+	const { token } = useAuth();
+
+	useEffect(() => {
+		if (token) {
+			navigate("/");
+		}
+	}, [token, navigate]);
+
 	const onSubmit = async (data: RegisterFormData) => {
 		try {
-			console.log("Register form data:", data);
 			await registerMutation.mutateAsync(data);
+			toast.success("Register successful");
+			queryClient.invalidateQueries({ queryKey: ["user"] });
+			navigate("/");
 		} catch (error) {
 			console.error("Register failed:", error);
 			toast.error("Register failed");

@@ -5,27 +5,31 @@ import LeftFilterSidebar from "@/components/common/LeftFilterSidebar";
 import MapView from "@/components/common/MapView";
 import PropertyListings from "@/components/common/PropertyListings";
 import { useSearchParams } from "react-router-dom";
-import type { newProperty, newPropertySearchFilters } from "@/types/property";
+import type {
+	Property,
+	PropertySearchFilters,
+	PropertySearchRequest,
+} from "@/types/property";
 import { Amenity, Highlight, PropertyType } from "@/utils/enums";
 import { usePropertySearch } from "@/services/propertyService";
 
-const initialSearchFilters: newPropertySearchFilters = {
+const initialSearchFilters: PropertySearchFilters = {
 	page: 1,
 	limit: 10,
-	sortBy: "price",
+	sortBy: "newest",
 	sortOrder: "asc",
 	search: "",
-	minPrice: 0,
+	minPrice: 1,
 	maxPrice: 1000000,
-	propertyType: "Apartment",
-	beds: 1,
-	baths: 1,
-	minSquareFeet: 0,
+	propertyType: undefined,
+	beds: undefined,
+	baths: undefined,
+	minSquareFeet: undefined,
 	maxSquareFeet: 1000000,
 	city: "",
 	state: "",
-	lat: 0,
-	lng: 0,
+	lat: undefined,
+	lng: undefined,
 	radius: 1000000,
 	hasPool: false,
 	hasGym: false,
@@ -42,7 +46,7 @@ const initialSearchFilters: newPropertySearchFilters = {
 const SearchPage = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [searchFilters, setSearchFilters] =
-		useState<newPropertySearchFilters>(initialSearchFilters);
+		useState<PropertySearchFilters>(initialSearchFilters);
 	useEffect(() => {
 		setSearchFilters((prev) => ({
 			...prev,
@@ -53,15 +57,25 @@ const SearchPage = () => {
 			search: searchParams.get("search") || "",
 			minPrice: parseInt(searchParams.get("minPrice") || "0"),
 			maxPrice: parseInt(searchParams.get("maxPrice") || "1000000"),
-			propertyType: searchParams.get("propertyType") as PropertyType,
-			beds: parseInt(searchParams.get("beds") || "1"),
-			baths: parseInt(searchParams.get("baths") || "1"),
+			propertyType: searchParams.get("propertyType") as
+				| PropertyType
+				| undefined,
+			beds: searchParams.get("beds")
+				? parseInt(searchParams.get("beds")!)
+				: undefined,
+			baths: searchParams.get("baths")
+				? parseInt(searchParams.get("baths")!)
+				: undefined,
 			minSquareFeet: parseInt(searchParams.get("minSquareFeet") || "0"),
 			maxSquareFeet: parseInt(searchParams.get("maxSquareFeet") || "1000000"),
 			city: searchParams.get("city") || "",
 			state: searchParams.get("state") || "",
-			lat: parseInt(searchParams.get("lat") || "0"),
-			lng: parseInt(searchParams.get("lng") || "0"),
+			lat: searchParams.get("lat")
+				? parseFloat(searchParams.get("lat")!)
+				: undefined,
+			lng: searchParams.get("lng")
+				? parseFloat(searchParams.get("lng")!)
+				: undefined,
 			radius: parseInt(searchParams.get("radius") || "1000000"),
 			hasPool: searchParams.get("hasPool") === "true",
 			hasGym: searchParams.get("hasGym") === "true",
@@ -117,9 +131,9 @@ const SearchPage = () => {
 		return query;
 	};
 
-	const updateSearchFilter = <K extends keyof newPropertySearchFilters>(
+	const updateSearchFilter = <K extends keyof PropertySearchFilters>(
 		key: K,
-		value: newPropertySearchFilters[K]
+		value: PropertySearchFilters[K]
 	) => {
 		setSearchFilters((prev) => ({ ...prev, [key]: value }));
 	};
@@ -143,7 +157,9 @@ const SearchPage = () => {
 		);
 	};
 
-	const { data: properties, isLoading } = usePropertySearch(buildSearchQuery());
+	const { data: properties, isLoading } = usePropertySearch(
+		buildSearchQuery() as unknown as PropertySearchRequest
+	);
 
 	if (isLoading) {
 		return <div>Loading...</div>;
@@ -165,7 +181,7 @@ const SearchPage = () => {
 					{isFilter && (
 						<LeftFilterSidebar
 							className="w-1/4 lg:w-1/5 flex-shrink-0 overflow-y-auto"
-							initialSearchFilters={initialSearchFilters}
+							searchFilters={searchFilters}
 							handleClearFilters={handleClearFilters}
 							handleApplyFilters={handleApplyFilters}
 							updateSearchFilter={updateSearchFilter}
@@ -176,13 +192,14 @@ const SearchPage = () => {
 					<MapView
 						className="flex-1 min-w-0"
 						isFilter={isFilter}
-						properties={properties?.data.properties || ([] as newProperty[])}
+						properties={properties?.data.properties || ([] as Property[])}
 					/>
 
 					{/* Property List (Right) */}
 					<PropertyListings
 						className="w-1/3 lg:w-1/4 flex-shrink-0 overflow-y-auto"
-						properties={properties?.data.properties || ([] as newProperty[])}
+						properties={properties?.data.properties || ([] as Property[])}
+						pagination={properties?.data.pagination}
 					/>
 				</div>
 			</div>

@@ -17,12 +17,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormData } from "@/schema/auth.schema";
 import { useLogin } from "@/services/authService";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
 
 const LoginForm = () => {
 	const login = useLogin();
 	const [showPassword, setShowPassword] = useState(false);
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 	const {
 		register,
 		handleSubmit,
@@ -31,10 +35,20 @@ const LoginForm = () => {
 		resolver: zodResolver(loginSchema),
 	});
 
+	const { token } = useAuth();
+
+	useEffect(() => {
+		if (token) {
+			navigate("/");
+		}
+	}, [token, navigate]);
+
 	const onSubmit = async (data: LoginFormData) => {
 		try {
-			console.log("Login form data:", data);
 			await login.mutateAsync(data);
+			toast.success("Login successful");
+			queryClient.invalidateQueries({ queryKey: ["user"] });
+			navigate("/");
 		} catch (error) {
 			console.error("Login failed:", error);
 			toast.error("Login failed");

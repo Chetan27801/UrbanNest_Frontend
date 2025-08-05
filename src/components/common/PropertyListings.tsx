@@ -1,20 +1,24 @@
 import { cn } from "@/lib/utils";
 import { Card, CardHeader, CardTitle, CardDescription } from "../ui/card";
 import PropertyCard from "./PropertyCard";
-import type { Property } from "@/types/property";
+import type { Property, PropertySearchResponse } from "@/types/property";
 
 const PropertyListings = ({
 	className,
 	properties,
+	pagination,
 }: {
 	className: string;
 	properties: Property[];
+	pagination: PropertySearchResponse["data"]["pagination"] | undefined;
 }) => {
 	return (
 		<div className={cn("flex flex-col gap-4", className)}>
 			<Card>
 				<CardHeader>
-					<CardTitle className="text-lg">{10} Places in Search Area</CardTitle>
+					<CardTitle className="text-lg">
+						{pagination?.totalItems} Places in Search Area
+					</CardTitle>
 					<CardDescription>
 						Properties matching your search criteria
 					</CardDescription>

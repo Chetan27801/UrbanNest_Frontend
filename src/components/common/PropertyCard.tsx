@@ -42,7 +42,11 @@ const PropertyCard = ({ property }: { property: Property }) => {
 						</div>
 						<div className="flex flex-row gap-2">
 							<FaSwimmingPool />
-							<span>{property.amenities.find((amenity) => amenity === Amenity.Pool)?.toString()}</span>
+							<span>
+								{property.amenities
+									.find((amenity) => amenity === Amenity.Pool)
+									?.toString()}
+							</span>
 						</div>
 					</div>
 				</div>

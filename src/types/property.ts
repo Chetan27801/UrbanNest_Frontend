@@ -1,7 +1,7 @@
 import { Amenity, Highlight, PropertyType } from "@/utils/enums";
 
 export interface Property {
-	id: string;
+	_id: string;
 	name: string;
 	description: string;
 	pricePerMonth: number;
@@ -86,5 +86,39 @@ export interface PropertySearchRequest {
 	appliedFilters: {
 		page: number;
 		limit: number;
+	};
+}
+
+export interface PropertySearchResponse {
+	success: boolean;
+	message: string;
+	data: {
+		properties: Property[];
+	};
+	pagination: {
+		currentPage: number;
+		totalPages: number;
+		totalItems: number;
+		hasNextPage: boolean;
+		hasPreviousPage: boolean;
+		limit: number;
+	};
+	appliedFilters: {
+		page: number;
+		limit: number;
+	};
+}
+
+export interface PropertyResponse {
+	success: boolean;
+	message: string;
+	properties: Property[];
+	pagination: {
+		total: number;
+		page: number;
+		limit: number;
+		totalPages: number;
+		hasNextPage: boolean;
+		hasPreviousPage: boolean;
 	};
 }

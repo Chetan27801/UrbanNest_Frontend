@@ -9,6 +9,8 @@ import { api } from "@/utils/apiAxios";
 import { QUERY_KEYS } from "@/lib/queryClient";
 import { loginSuccess, logout, setLoading } from "@/store/slices/authSlice";
 import { useAppDispatch } from "@/hooks";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useNavigate } from "react-router-dom";
 
 // Using your existing axios instance with interceptors
 
@@ -54,7 +56,6 @@ const authApiFunctions = {
 export const useLogin = () => {
 	const dispatch = useAppDispatch();
 	const queryClient = useQueryClient();
-
 	return useMutation({
 		mutationFn: authApiFunctions.login,
 		onMutate: () => {
@@ -68,13 +69,12 @@ export const useLogin = () => {
 		onError: () => {
 			dispatch(setLoading(false));
 		},
-	}); 
+	});
 };
 
 export const useRegister = () => {
 	const dispatch = useAppDispatch();
 	const queryClient = useQueryClient();
-
 	return useMutation({
 		mutationFn: authApiFunctions.register,
 		onMutate: () => {
@@ -94,7 +94,8 @@ export const useRegister = () => {
 export const useLogout = () => {
 	const dispatch = useAppDispatch();
 	const queryClient = useQueryClient();
-
+	const [, , removeToken] = useLocalStorage("token", "");
+	const navigate = useNavigate();
 	return useMutation({
 		mutationFn: async () => {
 			// Clear auth state - your axios interceptor will handle the cleanup
@@ -103,6 +104,8 @@ export const useLogout = () => {
 		onSuccess: () => {
 			dispatch(logout());
 			queryClient.clear();
+			removeToken();
+			navigate("/login");
 		},
 	});
 };

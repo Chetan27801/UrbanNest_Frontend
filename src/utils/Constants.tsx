@@ -39,11 +39,12 @@ import TenantPayment from "@/components/dashboard/Tenant/TenantPayment";
 import TenantSetting from "@/components/dashboard/Tenant/TenantSetting";
 
 //Landlord
-import LandloardProperties from "@/components/dashboard/Landlord/LandloardProperties";
+// import LandloardProperties from "@/components/dashboard/Landlord/LandloardProperties";
 import LandloardApplications from "@/components/dashboard/Landlord/LandloardApplications";
 import LandloardTenants from "@/components/dashboard/Landlord/LandloardTenants";
 import LandloardBillingHistory from "@/components/dashboard/Landlord/LandloardBillingHistory";
 import LandloardSetting from "@/components/dashboard/Landlord/LandloardSetting";
+import LandloardProperties from "@/components/dashboard/Landlord/LandloardProperties";
 
 const ADMIN_DASHBOARD_LIST = [
 	{
@@ -187,7 +188,6 @@ const amenities = [
 	{ id: "washerdryer", label: "Washer & Dryer", icon: BiSolidWasher },
 	{ id: "walkinclosets", label: "Walk-in Closets", icon: BiCloset },
 ];
-
 
 export {
 	ADMIN_DASHBOARD_LIST,

@@ -1,5 +1,11 @@
+import ProfileForm from "@/components/forms/ProfileForm";
+
 const TenantSetting = () => {
-	return <div>TenantSetting</div>;
+	return (
+		<div>
+			<ProfileForm />
+		</div>
+	);
 };
 
 export default TenantSetting;

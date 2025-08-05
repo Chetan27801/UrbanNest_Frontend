@@ -4,6 +4,10 @@ export interface User {
 	name: string;
 	role?: string;
 	avatar?: string;
+	phoneNumber?: string;
+	isVerified?: boolean;
+	isOnline?: boolean;
+	lastActive?: Date;
 }
 
 export interface AuthState {
@@ -29,4 +33,26 @@ export interface RegisterCredentials {
 	password: string;
 	role: "tenant" | "landlord";
 	avatar?: string;
+}
+
+export interface GetUsersResponse {
+	success: boolean;
+	message: string;
+	users: User[];
+	pagination: {
+		page: number;
+		limit: number;
+		totalPages: number;
+		totalUsers: number;
+		hasNextPage: boolean;
+		hasPreviousPage: boolean;
+	};
+}
+
+export interface ProfileFormData {
+	name?: string;
+	email?: string;
+	phoneNumber?: string;
+	avatar?: string;
+	password?: string;
 }

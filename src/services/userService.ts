@@ -1,10 +1,16 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { User } from "@/types/auth";
+import {
+	useQuery,
+	useMutation,
+	useQueryClient,
+	useInfiniteQuery,
+} from "@tanstack/react-query";
+import type { GetUsersResponse, User } from "@/types/auth";
 import API_ENDPOINTS from "@/utils/apiConstant";
 import { api } from "@/utils/apiAxios";
 import { QUERY_KEYS } from "@/lib/queryClient";
 import { updateUser } from "@/store/slices/authSlice";
 import { useAppDispatch } from "@/hooks";
+import type { ProfileFormData } from "@/types/auth";
 
 // API Functions
 const userApiFunctions = {
@@ -13,7 +19,7 @@ const userApiFunctions = {
 		return response.data;
 	},
 
-	updateProfile: async (userData: Partial<User>): Promise<User> => {
+	updateProfile: async (userData: ProfileFormData): Promise<User> => {
 		const response = await api.put<User>(
 			API_ENDPOINTS.USERS.UPDATE_PROFILE,
 			userData
@@ -36,6 +42,13 @@ const userApiFunctions = {
 
 	deleteProfile: async (): Promise<void> => {
 		await api.delete(API_ENDPOINTS.USERS.DELETE_PROFILE);
+	},
+
+	getUsers: async (page: number, limit: number): Promise<GetUsersResponse> => {
+		const response = await api.get<GetUsersResponse>(
+			API_ENDPOINTS.USERS.GET_ALL_USERS(page, limit)
+		);
+		return response.data;
 	},
 };
 
@@ -69,6 +82,33 @@ export const useUploadAvatar = () => {
 		mutationFn: userApiFunctions.uploadAvatar,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: QUERY_KEYS.user.profile });
+		},
+	});
+};
+
+export const useGetUsers = ({
+	page,
+	limit,
+}: {
+	page: number;
+	limit: number;
+}) => {
+	return useQuery({
+		queryKey: QUERY_KEYS.user.allUsers,
+		queryFn: () => userApiFunctions.getUsers(page, limit),
+	});
+};
+
+export const useInfiniteUsers = (limit: number) => {
+	return useInfiniteQuery({
+		queryKey: QUERY_KEYS.user.allUsers,
+		queryFn: ({ pageParam }) => userApiFunctions.getUsers(pageParam, limit),
+		initialPageParam: 1,
+		getNextPageParam: (lastPage) => {
+			if (lastPage.pagination.hasNextPage) {
+				return lastPage.pagination.page + 1;
+			}
+			return undefined;
 		},
 	});
 };

@@ -23,17 +23,21 @@ export const QUERY_KEYS = {
 	},
 	user: {
 		profile: ["user", "profile"],
-		allUsers: ["user", "all"],
+		allUsers: ["users", "all-users"],
 		userById: (id: string) => ["user", "by-id", id],
 	},
 	properties: {
 		all: ["properties", "all"],
 		byId: (id: string) => ["properties", "by-id", id],
-		searchByFilters: (filters: PropertySearchRequest) => ["properties", "search", filters],
+		searchByFilters: (filters: PropertySearchRequest) => [
+			"properties",
+			"search",
+			filters,
+		],
 		aiSearch: (query: string) => ["properties", "ai-search", query],
 	},
 	applications: {
-		all: ["applications", "all"],
+		allByLandlord: ["applications", "all", "landlord"],
 		byId: (id: string) => ["applications", "by-id", id],
 	},
 	leases: {
@@ -64,4 +68,4 @@ export const QUERY_KEYS = {
 			payments: ["stats", "tenant", "payments"],
 		},
 	},
-} as const; 
+} as const;

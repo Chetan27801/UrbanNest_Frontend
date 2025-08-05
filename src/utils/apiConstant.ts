@@ -18,7 +18,8 @@ const API_ENDPOINTS = {
 		GET_PROFILE: `${API_BASE_URL}/users/profile`,
 		UPDATE_PROFILE: `${API_BASE_URL}/users/update-profile`,
 		DELETE_PROFILE: `${API_BASE_URL}/users/delete-profile`,
-		GET_ALL_USERS: `${API_BASE_URL}/users/all-users`,
+		GET_ALL_USERS: (page: number, limit: number) =>
+			`${API_BASE_URL}/users/all-users?page=${page}&limit=${limit}`,
 		GET_USER_BY_ID: (id: string) => `${API_BASE_URL}/users/user-by-id/${id}`,
 		UPLOAD_AVATAR: `${API_BASE_URL}/users/upload-avatar`,
 		GET_AVATAR: `${API_BASE_URL}/users/get-avatar`,
@@ -43,10 +44,10 @@ const API_ENDPOINTS = {
 	APPLICATIONS: {
 		APPLY: (propertyId: string) =>
 			`${API_BASE_URL}/applications/apply/${propertyId}`,
-		GET_ALL: `${API_BASE_URL}/applications/get-all-applications`,
-		GET_BY_ID: (id: string) =>
+		GET_ALL_APPLICATIONS_BY_LANDLORD: `${API_BASE_URL}/applications/get-all-applications-by-landlord`,
+		GET_APPLICATION_BY_ID: (id: string) =>
 			`${API_BASE_URL}/applications/get-application/${id}`,
-		UPDATE: (id: string) =>
+		UPDATE_APPLICATION: (id: string) =>
 			`${API_BASE_URL}/applications/update-application/${id}`,
 	},
 
@@ -109,8 +110,10 @@ export const createApiUrl = {
 	deleteProperty: (id: string) => API_ENDPOINTS.PROPERTIES.DELETE(id),
 	applyForProperty: (propertyId: string) =>
 		API_ENDPOINTS.APPLICATIONS.APPLY(propertyId),
-	getApplicationById: (id: string) => API_ENDPOINTS.APPLICATIONS.GET_BY_ID(id),
-	updateApplication: (id: string) => API_ENDPOINTS.APPLICATIONS.UPDATE(id),
+	getApplicationById: (id: string) =>
+		API_ENDPOINTS.APPLICATIONS.GET_APPLICATION_BY_ID(id),
+	updateApplication: (id: string) =>
+		API_ENDPOINTS.APPLICATIONS.UPDATE_APPLICATION(id),
 	getLeaseById: (id: string) => API_ENDPOINTS.LEASES.GET_BY_ID(id),
 	terminateLease: (id: string) => API_ENDPOINTS.LEASES.TERMINATE(id),
 	getPaymentsByLeaseId: (leaseId: string) =>
