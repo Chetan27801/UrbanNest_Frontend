@@ -5,10 +5,16 @@ import { BedIcon, BathIcon } from "lucide-react";
 import { FaSwimmingPool } from "react-icons/fa";
 import type { Property } from "@/types/property";
 import { Amenity } from "@/utils/enums";
+import { useNavigate } from "react-router-dom";
 
 const PropertyCard = ({ property }: { property: Property }) => {
+	const navigate = useNavigate();
+
 	return (
-		<Card className="w-auto h-auto flex flex-col gap-2">
+		<Card
+			className="w-auto h-auto flex flex-col gap-2 cursor-pointer"
+			onClick={() => navigate(`/property/${property._id}`)}
+		>
 			<CardHeader>
 				<div className="flex flex-col gap-2">
 					<div className="relative">

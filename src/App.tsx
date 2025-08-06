@@ -15,6 +15,7 @@ import NavbarLayout from "./components/layouts/NavbarLayout";
 import FooterLayout from "./components/layouts/FooterLayout";
 import SearchPage from "./pages/public/SearchPage";
 import "leaflet/dist/leaflet.css";
+import PropertyDetail from "./pages/private/PropertyDetail";
 
 function App() {
 	return (
@@ -34,6 +35,8 @@ function App() {
 						<Route path="/search" element={<SearchPage />} />
 					</Route>
 				</Route>
+
+				<Route path="/property/:id" element={<PropertyDetail />} />
 
 				<Route path="/dashboard" element={<Dashboard />} />
 			</Routes>

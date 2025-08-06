@@ -7,10 +7,10 @@ import API_ENDPOINTS from "@/utils/apiConstant";
 import { api } from "@/utils/apiAxios";
 import { QUERY_KEYS } from "@/lib/queryClient";
 import {
-	type Property,
 	type PropertySearchRequest,
 	type PropertySearchResponse,
 	type PropertyResponse,
+	type PropertyDetailResponse,
 } from "@/types/property";
 
 export const propertyApiFunctions = {
@@ -27,7 +27,7 @@ export const propertyApiFunctions = {
 		return response.data;
 	},
 
-	getPropertyById: async (id: string): Promise<Property> => {
+	getPropertyById: async (id: string): Promise<PropertyDetailResponse> => {
 		const response = await api.get(API_ENDPOINTS.PROPERTIES.GET_BY_ID(id));
 		return response.data;
 	},

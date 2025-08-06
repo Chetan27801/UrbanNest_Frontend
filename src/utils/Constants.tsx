@@ -42,7 +42,7 @@ import TenantSetting from "@/components/dashboard/Tenant/TenantSetting";
 // import LandloardProperties from "@/components/dashboard/Landlord/LandloardProperties";
 import LandloardApplications from "@/components/dashboard/Landlord/LandloardApplications";
 import LandloardTenants from "@/components/dashboard/Landlord/LandloardTenants";
-import LandloardBillingHistory from "@/components/dashboard/Landlord/LandloardBillingHistory";
+// import LandloardBillingHistory from "@/components/dashboard/Landlord/LandloardBillingHistory";
 import LandloardSetting from "@/components/dashboard/Landlord/LandloardSetting";
 import LandloardProperties from "@/components/dashboard/Landlord/LandloardProperties";
 
@@ -137,13 +137,13 @@ const LANDLORD_DASHBOARD_LIST = [
 		component: <LandloardTenants />,
 		url: "/landlord/tenants",
 	},
-	{
-		id: "4",
-		title: "Billing History",
-		icon: <DollarSignIcon />,
-		component: <LandloardBillingHistory />,
-		url: "/landlord/billing-history",
-	},
+	// {
+	// 	id: "4",
+	// 	title: "Billing History",
+	// 	icon: <DollarSignIcon />,
+	// 	component: <LandloardBillingHistory />,
+	// 	url: "/landlord/billing-history",
+	// },
 	{
 		id: "5",
 		title: "Settings",

@@ -32,6 +32,8 @@ export interface Property {
 	landlord: {
 		name: string;
 		email: string;
+		phoneNumber: string;
+		avatar: string;
 	};
 	minLeaseTerm: number;
 	isAvailable: boolean;
@@ -121,4 +123,10 @@ export interface PropertyResponse {
 		hasNextPage: boolean;
 		hasPreviousPage: boolean;
 	};
+}
+
+export interface PropertyDetailResponse {
+	success: boolean;
+	message: string;
+	data: Property;
 }

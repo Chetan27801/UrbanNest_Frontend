@@ -20,12 +20,14 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "../ui/tooltip";
+import { useNavigate } from "react-router-dom";
 
 const PropertyApplicationCard = ({
 	application,
 }: {
 	application: Application;
 }) => {
+	const navigate = useNavigate();
 	const getStatusClasses = (status: ApplicationStatus) => {
 		switch (status) {
 			case ApplicationStatus.Approved:
@@ -139,7 +141,13 @@ const PropertyApplicationCard = ({
 					)}
 
 					<div className="flex flex-row justify-between items-center">
-						<Button variant="default">View Property</Button>
+						<Button
+							className="cursor-pointer"
+							variant="default"
+							onClick={() => navigate(`/property/${application.property._id}`)}
+						>
+							View Property
+						</Button>
 						<Select
 							onValueChange={(value) => {
 								console.log(value);

@@ -9,7 +9,7 @@ import API_ENDPOINTS from "@/utils/apiConstant";
 import { api } from "@/utils/apiAxios";
 import { QUERY_KEYS } from "@/lib/queryClient";
 import { updateUser } from "@/store/slices/authSlice";
-import { useAppDispatch } from "@/hooks";
+import { useAppDispatch, useAuth } from "@/hooks";
 import type { ProfileFormData } from "@/types/auth";
 
 // API Functions
@@ -53,11 +53,13 @@ const userApiFunctions = {
 };
 
 // Custom Hooks
-export const useProfile = (enabled: boolean = true) => {
+export const useProfile = () => {
+	const { isAuthenticated } = useAuth();
 	return useQuery({
 		queryKey: QUERY_KEYS.user.profile,
 		queryFn: userApiFunctions.getProfile,
-		enabled,
+		enabled: isAuthenticated,
+		refetchOnMount: "always",
 		retry: 1,
 	});
 };

@@ -12,6 +12,7 @@ import type {
 } from "@/types/property";
 import { Amenity, Highlight, PropertyType } from "@/utils/enums";
 import { usePropertySearch } from "@/services/propertyService";
+import { Loader2 } from "lucide-react";
 
 const initialSearchFilters: PropertySearchFilters = {
 	page: 1,
@@ -162,7 +163,11 @@ const SearchPage = () => {
 	);
 
 	if (isLoading) {
-		return <div>Loading...</div>;
+		return <Loader2 className="w-4 h-4 animate-spin" />;
+	}
+
+	if (properties?.data.properties.length === 0) {
+		return <div>No properties found</div>;
 	}
 
 	return (

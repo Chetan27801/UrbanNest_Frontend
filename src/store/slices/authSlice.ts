@@ -32,7 +32,7 @@ const authSlice = createSlice({
 			state.isLoading = false;
 		},
 		updateUser: (state, action: PayloadAction<User>) => {
-			state.user = action.payload;
+			state.user = { ...state.user, ...action.payload };
 		},
 		clearAuth: () => {
 			return initialState;

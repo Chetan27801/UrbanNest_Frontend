@@ -21,12 +21,12 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useUpdateProfile } from "@/services/userService";
-import { queryClient } from "@/lib/queryClient";
 
 interface ProfileProps {
 	className?: string;
 }
 
+//TODO: not refetching the profile after update only refetching when user is logged in again
 const ProfileForm: React.FC<ProfileProps> = ({ className }) => {
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -84,7 +84,6 @@ const ProfileForm: React.FC<ProfileProps> = ({ className }) => {
 
 		if (Object.keys(changedData).length > 0) {
 			await updateProfile(changedData);
-			queryClient.invalidateQueries({ queryKey: ["profile"] });
 		} else {
 			console.log("🤷 No changes to submit.");
 		}
