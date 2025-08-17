@@ -35,6 +35,12 @@ const authSlice = createSlice({
 			state.user = { ...state.user, ...action.payload };
 		},
 		clearAuth: () => {
+			try {
+				localStorage.removeItem("persist:auth");
+				localStorage.removeItem("token");
+			} catch (error) {
+				console.error("Error clearing auth state:", error);
+			}
 			return initialState;
 		},
 	},

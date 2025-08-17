@@ -12,30 +12,25 @@ import { MdOutlineVilla } from "react-icons/md";
 // Define props for clarity
 interface LeftFilterSidebarProps {
 	className: string;
-	searchFilters: PropertySearchFilters; // The currently applied filters from parent
-	handleClearFilters: () => void;
-	handleApplyFilters: () => void;
-	updateSearchFilter: <K extends keyof PropertySearchFilters>(
-		key: K,
-		value: PropertySearchFilters[K]
-	) => void;
+	filters: PropertySearchFilters;
+	updateFilters: (updates: Partial<PropertySearchFilters>) => void;
+	resetFilters: () => void;
 }
 
 const LeftFilterSidebar = ({
 	className,
-	searchFilters,
-	handleClearFilters,
-	handleApplyFilters,
-	updateSearchFilter,
+	filters,
+	updateFilters,
+	resetFilters,
 }: LeftFilterSidebarProps) => {
 	// Local state to manage "pending" changes before applying
 	const [pendingFilters, setPendingFilters] =
-		useState<PropertySearchFilters>(searchFilters);
+		useState<PropertySearchFilters>(filters);
 
 	// Sync local state if parent state changes (e.g., from URL on initial load)
 	useEffect(() => {
-		setPendingFilters(searchFilters);
-	}, [searchFilters]);
+		setPendingFilters(filters);
+	}, [filters]);
 
 	// Helper to update a single value in the pending state
 	const updatePendingFilter = <K extends keyof PropertySearchFilters>(
@@ -56,28 +51,24 @@ const LeftFilterSidebar = ({
 
 	// When "Apply" is clicked, send all pending changes to the parent
 	const handleApply = () => {
-		// This replaces the complex `handleFilter` function
-		Object.keys(pendingFilters).forEach((key) => {
-			const filterKey = key as keyof PropertySearchFilters;
-			updateSearchFilter(filterKey, pendingFilters[filterKey]);
-		});
-		// Use a timeout to ensure state propagation before applying
-		setTimeout(() => {
-			handleApplyFilters();
-		}, 0);
+		updateFilters(pendingFilters);
 	};
 
 	// Clear filters in both local and parent state
 	const handleClear = () => {
-		// We can just call the parent clear function, and the useEffect will sync our pending state
-		handleClearFilters();
+		resetFilters();
 	};
 
 	return (
-		<div className={cn("flex p-4 border-r flex-col gap-2", className)}>
+		<div
+			className={cn(
+				"flex p-6 bg-white rounded-lg shadow-sm border flex-col gap-6",
+				className
+			)}
+		>
 			{/* Property Type Section */}
 			<div className="flex flex-col gap-4">
-				<h1 className="text-md font-bold">Property Type</h1>
+				<h1 className="text-lg font-semibold text-gray-900">Property Type</h1>
 				<div className="grid grid-cols-2 gap-2">
 					{/* Simplified and corrected buttons */}
 					<Button
@@ -179,20 +170,24 @@ const LeftFilterSidebar = ({
 				</div>
 			</div>
 
-			<Separator className="max-w-full my-2 bg-gray-300" />
+			<Separator className="max-w-full my-2 bg-gray-200" />
 
 			{/* Price Range Section */}
 			<div className="flex flex-col gap-4">
-				<h1 className="text-md font-bold">Price Range</h1>
+				<h1 className="text-lg font-semibold text-gray-900">Price Range</h1>
 				<div className="flex items-center gap-2">
 					<span className="text-sm font-medium">Min</span>
 					<Input
 						type="number"
 						placeholder="Min Price"
-						value={pendingFilters?.minPrice || 1}
-						onChange={(e) =>
-							updatePendingFilter("minPrice", parseInt(e.target.value) || 1)
-						}
+						value={pendingFilters?.minPrice || ""}
+						onChange={(e) => {
+							const value = e.target.value;
+							updatePendingFilter(
+								"minPrice",
+								value ? parseInt(value) : undefined
+							);
+						}}
 					/>
 				</div>
 				<div className="flex items-center gap-2">
@@ -200,22 +195,23 @@ const LeftFilterSidebar = ({
 					<Input
 						type="number"
 						placeholder="Max Price"
-						value={pendingFilters?.maxPrice || 1000000}
-						onChange={(e) =>
+						value={pendingFilters?.maxPrice || ""}
+						onChange={(e) => {
+							const value = e.target.value;
 							updatePendingFilter(
 								"maxPrice",
-								parseInt(e.target.value) || 1000000
-							)
-						}
+								value ? parseInt(value) : undefined
+							);
+						}}
 					/>
 				</div>
 			</div>
 
-			<Separator className="max-w-full my-2 bg-gray-300" />
+			<Separator className="max-w-full my-2 bg-gray-200" />
 
 			{/* Conveniences Section */}
 			<div className="flex flex-col gap-4 text-sm">
-				<h1 className="text-md font-bold">Conveniences</h1>
+				<h1 className="text-lg font-semibold text-gray-900">Conveniences</h1>
 				<div className="flex flex-wrap gap-2">
 					{amenitiesList.map((amenity) => (
 						<Button
@@ -226,7 +222,6 @@ const LeftFilterSidebar = ({
 									: "outline"
 							}
 							className="h-auto flex flex-row gap-2 p-2"
-							// **LOGIC FIX**: Use the correct toggle function
 							onClick={() => togglePendingAmenity(amenity.id as Amenity)}
 						>
 							<amenity.icon />
@@ -236,20 +231,22 @@ const LeftFilterSidebar = ({
 				</div>
 			</div>
 
-			<Button
-				variant="default"
-				className="h-auto flex flex-row gap-2 p-2 mt-auto"
-				onClick={handleApply}
-			>
-				<span>Apply</span>
-			</Button>
-			<Button
-				variant="outline"
-				className="h-auto flex flex-row gap-2 p-2"
-				onClick={handleClear}
-			>
-				<span>Clear All</span>
-			</Button>
+			<div className="flex flex-col gap-3 mt-auto pt-4">
+				<Button
+					variant="default"
+					className="w-full py-3 font-medium"
+					onClick={handleApply}
+				>
+					Apply Filters
+				</Button>
+				<Button
+					variant="outline"
+					className="w-full py-3 font-medium"
+					onClick={handleClear}
+				>
+					Clear All
+				</Button>
+			</div>
 		</div>
 	);
 };

@@ -1,17 +1,22 @@
 import {
 	keepPreviousData,
+	useMutation,
 	useInfiniteQuery,
 	useQuery,
+	useQueryClient,
 } from "@tanstack/react-query";
 import API_ENDPOINTS from "@/utils/apiConstant";
 import { api } from "@/utils/apiAxios";
 import { QUERY_KEYS } from "@/lib/queryClient";
 import {
-	type PropertySearchRequest,
 	type PropertySearchResponse,
 	type PropertyResponse,
 	type PropertyDetailResponse,
+	type PropertySearchFilters,
 } from "@/types/property";
+import type {
+	CreatePropertyTypeWithImages,
+} from "@/schema/property.schema";
 
 export const propertyApiFunctions = {
 	getProperties: async (
@@ -33,7 +38,7 @@ export const propertyApiFunctions = {
 	},
 
 	getPropertySearch: async (
-		query: PropertySearchRequest
+		query: PropertySearchFilters
 	): Promise<PropertySearchResponse> => {
 		let queryString = "";
 		for (const [key, value] of Object.entries(query)) {
@@ -45,6 +50,10 @@ export const propertyApiFunctions = {
 			API_ENDPOINTS.PROPERTIES.SEARCH(queryString)
 		);
 
+		return response.data;
+	},
+	createProperty: async (data: CreatePropertyTypeWithImages) => {
+		const response = await api.post(API_ENDPOINTS.PROPERTIES.CREATE, data);
 		return response.data;
 	},
 };
@@ -85,7 +94,7 @@ export const useInfiniteProperties = (limit: number) => {
 };
 
 export const usePropertySearch = (
-	query: PropertySearchRequest,
+	query: PropertySearchFilters,
 	enabled: boolean = true
 ) => {
 	return useQuery({
@@ -93,5 +102,34 @@ export const usePropertySearch = (
 		queryFn: () => propertyApiFunctions.getPropertySearch(query),
 		placeholderData: keepPreviousData,
 		enabled,
+	});
+};
+
+export const useInfinitePropertySearch = (query: PropertySearchFilters) => {
+	return useInfiniteQuery({
+		queryKey: QUERY_KEYS.properties.searchByFilters(query),
+		queryFn: ({ pageParam }) =>
+			propertyApiFunctions.getPropertySearch({
+				...query,
+				page: pageParam as number,
+			}),
+		initialPageParam: 1,
+		getNextPageParam: (lastPage) => {
+			if (lastPage.pagination.hasNextPage) {
+				return lastPage.pagination.page + 1;
+			}
+			return undefined;
+		},
+	});
+};
+
+export const useCreateProperty = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (data: CreatePropertyTypeWithImages) =>
+			propertyApiFunctions.createProperty(data),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: QUERY_KEYS.properties.all });
+		},
 	});
 };

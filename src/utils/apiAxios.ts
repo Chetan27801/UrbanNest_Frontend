@@ -3,7 +3,22 @@ import toast from "react-hot-toast";
 import { store } from "@/store";
 import { logout } from "@/store/slices/authSlice";
 
-//Create axios instance
+// Smart logout handler - centralized token expiration handling
+const smartLogout = () => {
+	store.dispatch(logout());
+	toast.error("Session expired. Please login again.");
+	window.location.href = "/login";
+};
+
+// Check if JWT token is expired
+const isTokenExpired = (token: string): boolean => {
+	try {
+		const payload = JSON.parse(atob(token.split(".")[1]));
+		return payload.exp < Date.now() / 1000;
+	} catch {
+		return true; // If token is malformed, consider it expired
+	}
+};
 
 export const api = axios.create({
 	baseURL: import.meta.env.VITE_API_URL,
@@ -13,44 +28,33 @@ export const api = axios.create({
 	},
 });
 
-//Request interceptor to add auth token to headers
-
+// Request interceptor - proactive token validation
 api.interceptors.request.use(
 	(config) => {
-		const state = store.getState(); //Axios interceptor is a plain JavaScript module, not a React component. This means you cannot use React hooks like useSelector to access the Redux state.
-		const token = state.auth.token;
+		const token = store.getState().auth.token;
 
 		if (token) {
+			// Check token expiration before making request
+			if (isTokenExpired(token)) {
+				smartLogout();
+				return Promise.reject(new Error("Token expired"));
+			}
 			config.headers.Authorization = `Bearer ${token}`;
 		}
 
 		return config;
 	},
-	(error) => {
-		return Promise.reject(error);
-	}
+	(error) => Promise.reject(error)
 );
 
-//Response interceptor to handle errors globally
+// Response interceptor - handle server-side token validation
 api.interceptors.response.use(
-	(response: AxiosResponse) => {
-		return response;
-	},
+	(response: AxiosResponse) => response,
 	(error: AxiosError) => {
+		// Handle authentication errors
 		if (error.response?.status === 401) {
-			store.dispatch(logout());
-			toast.error("Session expired. Please login again.");
-			window.location.href = "/login";
-		} else if (error.response?.status === 403) {
-			toast.error("Access denied. Please login again.");
-		} else if (error.response?.status === 404) {
-			toast.error("Resource not found.");
-		} else if (error.response?.status === 400) {
-			toast.error("Bad request. Please check your input.");
-		} else if (error.response?.status === 500) {
-			toast.error("Internal server error. Please try again later.");
+			smartLogout();
 		}
-
 		return Promise.reject(error);
 	}
 );

@@ -21,7 +21,7 @@ const HomePage = () => {
 	return (
 		<div className="min-h-screen">
 			{/* Hero Section */}
-			<section className="relative h-screen w-full flex items-center justify-center">
+			<section className="relative h-screen w-full flex items-center justify-center -mt-20">
 				{/* Background Image with Overlay */}
 				<div
 					className="absolute inset-0 bg-cover bg-center bg-no-repeat"

@@ -7,7 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { profileSchema, type ProfileFormData } from "@/schema/profile.schema";
+import {
+	profileSchema,
+	profileSchemaWithImages,
+	type ProfileFormData,
+	type ProfileFormDataWithImages,
+} from "@/schema/profile.schema";
 import {
 	User,
 	Mail,
@@ -21,6 +26,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useUpdateProfile } from "@/services/userService";
+import { uploadFile } from "@/utils/uploadFile";
 
 interface ProfileProps {
 	className?: string;
@@ -81,9 +87,23 @@ const ProfileForm: React.FC<ProfileProps> = ({ className }) => {
 			const typedKey = key as keyof ProfileFormData;
 			changedData[typedKey] = data[typedKey];
 		}
-
+		let parsed;
 		if (Object.keys(changedData).length > 0) {
-			await updateProfile(changedData);
+			if (changedData.avatar) {
+				const imageUrl = await uploadFile(
+					data.avatar as File,
+					user?.id || "users",
+					"avatars"
+				);
+				parsed = profileSchemaWithImages.parse({
+					...changedData,
+					avatar: imageUrl,
+				});
+			} else {
+				parsed = profileSchema.parse(changedData);
+			}	
+			console.log("Parsed data:", parsed);
+			await updateProfile(parsed as ProfileFormDataWithImages);
 		} else {
 			console.log("🤷 No changes to submit.");
 		}

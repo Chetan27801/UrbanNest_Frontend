@@ -28,7 +28,7 @@ const API_ENDPOINTS = {
 
 	// Property management endpoints
 	PROPERTIES: {
-		CREATE: `${API_BASE_URL}/properties/`,
+		CREATE: `${API_BASE_URL}/properties/create-property`,
 		GET_ALL: `${API_BASE_URL}/properties/get-all`,
 		GET_BY_ID: (id: string) => `${API_BASE_URL}/properties/get-by-id/${id}`,
 		UPDATE: (id: string) => `${API_BASE_URL}/properties/update/${id}`,
@@ -99,6 +99,13 @@ const API_ENDPOINTS = {
 			OVERVIEW: `${API_BASE_URL}/stats/tenant/overview`,
 			PAYMENTS: `${API_BASE_URL}/stats/tenant/payments`,
 		},
+	},
+
+	// Media endpoints
+	MEDIA: {
+		GENERATE_PRESIGNED_URL: `${API_BASE_URL}/media/generate-presigned-url`,
+		GET_MEDIA_URL: (key: string) =>
+			`${API_BASE_URL}/media/media-url/${encodeURIComponent(key)}`,
 	},
 };
 

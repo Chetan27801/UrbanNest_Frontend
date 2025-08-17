@@ -14,10 +14,14 @@ import DealsPage from "./pages/public/DealsPage";
 import NavbarLayout from "./components/layouts/NavbarLayout";
 import FooterLayout from "./components/layouts/FooterLayout";
 import SearchPage from "./pages/public/SearchPage";
-import "leaflet/dist/leaflet.css";
 import PropertyDetail from "./pages/private/PropertyDetail";
+import { useTokenValidator } from "./hooks/useTokenValidator";
+import "leaflet/dist/leaflet.css";
 
 function App() {
+	// Automatic token validation
+	useTokenValidator();
+
 	return (
 		<Router>
 			<Routes>
@@ -33,10 +37,9 @@ function App() {
 						<Route path="/support" element={<Support />} />
 						<Route path="/deals" element={<DealsPage />} />
 						<Route path="/search" element={<SearchPage />} />
+						<Route path="/property/:id" element={<PropertyDetail />} />
 					</Route>
 				</Route>
-
-				<Route path="/property/:id" element={<PropertyDetail />} />
 
 				<Route path="/dashboard" element={<Dashboard />} />
 			</Routes>

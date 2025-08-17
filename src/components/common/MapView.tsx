@@ -110,7 +110,7 @@ const MapView = ({
 
 				{validProperties.map((property) => (
 					<Marker
-						key={property.id} // Add the required key prop
+						key={property._id} // Add the required key prop
 						position={[
 							property.location.coordinates.coordinates[0] as number,
 							property.location.coordinates.coordinates[1] as number,
@@ -119,7 +119,7 @@ const MapView = ({
 					>
 						<Popup className="custom-popup">
 							<Link
-								to={`/property/${property.id}`}
+								to={`/property/${property._id}`}
 								className="text-blue-500 hover:text-cyan-600"
 							>
 								View Details

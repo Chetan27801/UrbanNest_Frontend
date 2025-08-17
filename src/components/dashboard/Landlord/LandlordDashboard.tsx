@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { LANDLORD_DASHBOARD_LIST } from "@/utils/Constants";
 import { useState } from "react";
 
-const LandloardDashboard = () => {
+const LandlordDashboard = () => {
 	const { user } = useAuth();
 	const [activeTab, setActiveTab] = useState<string>(
 		LANDLORD_DASHBOARD_LIST[0].id
@@ -24,4 +24,4 @@ const LandloardDashboard = () => {
 	);
 };
 
-export default LandloardDashboard;
+export default LandlordDashboard;

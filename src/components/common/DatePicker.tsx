@@ -1,5 +1,9 @@
-import { Popover, PopoverTrigger } from "@radix-ui/react-popover";
-import { PopoverContent } from "@radix-ui/react-popover";
+import {
+	Popover,
+	PopoverTrigger,
+	PopoverContent,
+	PopoverPortal,
+} from "@radix-ui/react-popover";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import { ChevronDownIcon } from "lucide-react";
@@ -24,18 +28,24 @@ const DatePicker = ({
 					<ChevronDownIcon className="w-4 h-4" />
 				</Button>
 			</PopoverTrigger>
-			<PopoverContent className="w-auto overflow-hidden p-0" align="start">
-				<Calendar
-					mode="single"
-					selected={date}
-					captionLayout="dropdown"
-					onSelect={(date) => {
-						setDate(date);
-						setOpen(false);
-					}}
-					className="bg-background border border-border rounded-md shadow-sm w-full h-full z"
-				/>
-			</PopoverContent>
+			<PopoverPortal>
+				<PopoverContent
+					align="start"
+					sideOffset={8}
+					className="z-50 w-auto p-0 bg-white border border-border rounded-md shadow-lg"
+				>
+					<Calendar
+						mode="single"
+						selected={date}
+						captionLayout="dropdown"
+						onSelect={(date) => {
+							setDate(date);
+							setOpen(false);
+						}}
+						className="bg-background w-full h-full"
+					/>
+				</PopoverContent>
+			</PopoverPortal>
 		</Popover>
 	);
 };

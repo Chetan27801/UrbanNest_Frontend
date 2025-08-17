@@ -1,6 +1,6 @@
 import ProfileForm from "@/components/forms/ProfileForm";
 
-const LandloardSetting = () => {
+const LandlordSetting = () => {
 	return (
 		<div>
 			<ProfileForm />
@@ -8,4 +8,4 @@ const LandloardSetting = () => {
 	);
 };
 
-export default LandloardSetting;
+export default LandlordSetting;

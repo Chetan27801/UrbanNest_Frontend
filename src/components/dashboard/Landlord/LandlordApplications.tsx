@@ -1,7 +1,7 @@
 import { useGetAllApplicationsByLandlord } from "@/services/applicationService";
 import PropertyApplicationCard from "@/components/common/PropertyApplicationCard";
 
-const LandloardApplications = () => {
+const LandlordApplications = () => {
 	const { data: applications } = useGetAllApplicationsByLandlord();
 	return (
 		<div className="flex flex-col gap-4 w-full p-4">
@@ -15,4 +15,4 @@ const LandloardApplications = () => {
 	);
 };
 
-export default LandloardApplications;
+export default LandlordApplications;

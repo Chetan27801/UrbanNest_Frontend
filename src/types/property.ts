@@ -45,8 +45,8 @@ export interface PropertySearchFilters {
 	moveInDate?: Date;
 	page: number;
 	limit: number;
-	sortBy?: string;
-	sortOrder?: string;
+	sortBy?: "pricePerMonth" | "postedAt" | "averageRating" | "squareFeet";
+	sortOrder?: "asc" | "desc";
 	search?: string;
 	minPrice?: number;
 	maxPrice?: number;
@@ -71,26 +71,6 @@ export interface PropertySearchFilters {
 	highlights?: Highlight[];
 }
 
-export interface PropertySearchRequest {
-	success: boolean;
-	message: string;
-	data: {
-		properties: Property[];
-	};
-	pagination: {
-		currentPage: number;
-		totalPages: number;
-		totalItems: number;
-		hasNextPage: boolean;
-		hasPreviousPage: boolean;
-		limit: number;
-	};
-	appliedFilters: {
-		page: number;
-		limit: number;
-	};
-}
-
 export interface PropertySearchResponse {
 	success: boolean;
 	message: string;
@@ -98,7 +78,7 @@ export interface PropertySearchResponse {
 		properties: Property[];
 	};
 	pagination: {
-		currentPage: number;
+		page: number;
 		totalPages: number;
 		totalItems: number;
 		hasNextPage: boolean;

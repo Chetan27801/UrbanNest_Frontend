@@ -2,23 +2,14 @@ import PropertyCard from "@/components/common/PropertyCard";
 import { Button } from "@/components/ui/button";
 import { useInfiniteProperties } from "@/services/propertyService";
 import type { Property } from "@/types/property";
-import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 
-const LandloardProperties = () => {
+const LandlordProperties = () => {
 	const limit = 10;
-	const [response, setResponse] = useState<Property[]>([]);
 	const { data, isLoading, isError, fetchNextPage, hasNextPage } =
 		useInfiniteProperties(limit);
 
-	useEffect(() => {
-		setResponse((prev) => {
-			if (data?.pages[0]?.properties !== undefined) {
-				return [...prev, ...data.pages[data.pages.length - 1].properties];
-			}
-			return prev;
-		});
-	}, [data?.pages]);
+	const allProperties = data?.pages?.flatMap((page) => page.properties) || [];
 
 	if (isError)
 		return (
@@ -35,7 +26,7 @@ const LandloardProperties = () => {
 				</div>
 			) : (
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-					{response?.map((property: Property) => (
+					{allProperties?.map((property: Property) => (
 						<PropertyCard key={property._id} property={property} />
 					))}
 				</div>
@@ -54,4 +45,4 @@ const LandloardProperties = () => {
 		</div>
 	);
 };
-export default LandloardProperties;
+export default LandlordProperties;

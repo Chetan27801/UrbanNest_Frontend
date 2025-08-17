@@ -24,4 +24,9 @@ export const profileSchema = z.object({
 		.optional(),
 });
 
+export const profileSchemaWithImages = profileSchema.extend({
+	avatar: z.string().optional(),
+});
+
 export type ProfileFormData = z.infer<typeof profileSchema>;
+export type ProfileFormDataWithImages = z.infer<typeof profileSchemaWithImages>;

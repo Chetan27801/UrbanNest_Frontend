@@ -35,7 +35,7 @@ const Navbar = () => {
 						Home
 						<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-600 transition-all duration-300 group-hover:w-full"></span>
 					</Link>
-					<Link
+					{/* <Link
 						to="/deals"
 						className={` font-medium hover:text-cyan-600 transition-colors duration-300 relative group ${
 							active === "/deals" ? "text-cyan-400" : "text-white"
@@ -44,7 +44,7 @@ const Navbar = () => {
 					>
 						Deals
 						<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-600 transition-all duration-300 group-hover:w-full"></span>
-					</Link>
+					</Link> */}
 					<Link
 						to="/search"
 						className={` font-medium hover:text-cyan-600 transition-colors duration-300 relative group ${

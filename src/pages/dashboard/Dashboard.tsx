@@ -1,7 +1,7 @@
 import { useAuth } from "@/hooks/useAuth";
 import AdminDashboard from "../../components/dashboard/Admin/AdminDashboard";
 import TenantDashboard from "../../components/dashboard/Tenant/TenantDashboard";
-import LandloardDashboard from "../../components/dashboard/Landlord/LandloardDashboard";
+import LandloardDashboard from "../../components/dashboard/Landlord/LandlordDashboard";
 
 const Dashboard = () => {
 	const { user } = useAuth();

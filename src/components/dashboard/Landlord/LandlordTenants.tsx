@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { User } from "@/types/auth";
 
-const LandloardTenants = () => {
+const LandlordTenants = () => {
 	const limit = 10;
 	const [usersData, setUsersData] = useState<User[]>([]);
 	const {
@@ -56,4 +56,4 @@ const LandloardTenants = () => {
 		</div>
 	);
 };
-export default LandloardTenants;
+export default LandlordTenants;
