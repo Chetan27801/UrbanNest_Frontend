@@ -1,4 +1,4 @@
-import type { PropertySearchRequest } from "@/types/property";
+import { type PropertySearchFilters } from "@/types/property";
 import { QueryClient } from "@tanstack/react-query";
 
 export const queryClient = new QueryClient({
@@ -25,11 +25,12 @@ export const QUERY_KEYS = {
 		profile: ["user", "profile"],
 		allUsers: ["users", "all-users"],
 		userById: (id: string) => ["user", "by-id", id],
+		favoriteProperties: ["user", "favorite-properties"],
 	},
 	properties: {
 		all: ["properties", "all"],
 		byId: (id: string) => ["properties", "by-id", id],
-		searchByFilters: (filters: PropertySearchRequest) => [
+		searchByFilters: (filters: PropertySearchFilters) => [
 			"properties",
 			"search",
 			filters,
@@ -37,17 +38,38 @@ export const QUERY_KEYS = {
 		aiSearch: (query: string) => ["properties", "ai-search", query],
 	},
 	applications: {
-		allByLandlord: ["applications", "all", "landlord"],
+		all: ["applications", "all"],
+		allByLandlord: (status: string) => [
+			"applications",
+			"all",
+			"landlord",
+			status,
+		],
 		byId: (id: string) => ["applications", "by-id", id],
+		checkStatus: (propertyId: string) => [
+			"applications",
+			"check-status",
+			propertyId,
+		],
 	},
 	leases: {
 		all: ["leases", "all"],
+		allByLandlord: (status: string) => ["leases", "all", "landlord", status],
 		byId: (id: string) => ["leases", "by-id", id],
 	},
 	payments: {
-		byLeaseId: (leaseId: string) => ["payments", "lease", leaseId],
-		byId: (id: string) => ["payments", "by-id", id],
-		history: ["payments", "history"],
+		byLeaseId: (leaseId: string, limit: number, userId?: string) =>
+			userId
+				? ["payments", "lease", leaseId, limit, "user", userId]
+				: ["payments", "lease", leaseId, limit],
+		byId: (id: string, userId?: string) =>
+			userId
+				? ["payments", "by-id", id, "user", userId]
+				: ["payments", "by-id", id],
+		history: (status: string, userId?: string) =>
+			userId
+				? ["payments", "history", status, "user", userId]
+				: ["payments", "history", status],
 	},
 	chat: {
 		conversations: ["chat", "conversations"],
@@ -67,5 +89,6 @@ export const QUERY_KEYS = {
 			overview: ["stats", "tenant", "overview"],
 			payments: ["stats", "tenant", "payments"],
 		},
+		propertyDataForHome: (type: string) => ["stats", "property", "data-for-home", type],
 	},
 } as const;

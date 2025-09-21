@@ -21,6 +21,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
+import type { ErrorResponse } from "@/types/error";
+import API_ENDPOINTS from "@/utils/apiConstant";
 
 const LoginForm = () => {
 	const login = useLogin();
@@ -43,16 +45,26 @@ const LoginForm = () => {
 		}
 	}, [token, navigate]);
 
-	const onSubmit = async (data: LoginFormData) => {
-		try {
-			await login.mutateAsync(data);
-			toast.success("Login successful");
-			queryClient.invalidateQueries({ queryKey: ["user"] });
-			navigate("/");
-		} catch (error) {
-			console.error("Login failed:", error);
-			toast.error("Login failed");
-		}
+	const onSubmit = (data: LoginFormData) => {
+		login.mutate(data, {
+			onSuccess: () => {
+				toast.success("Login successful");
+				queryClient.invalidateQueries({ queryKey: ["user"] });
+				navigate("/");
+			},
+			onError: (error: unknown) => {
+				const errorMessage =
+					error instanceof Error && "message" in error
+						? (error as ErrorResponse)?.message
+						: "Failed to login";
+				toast.error(errorMessage);
+				console.error(error);
+			},
+		});
+	};
+
+	const handleGoogleAuth = () => {
+		window.location.href = API_ENDPOINTS.AUTH.GOOGLE_AUTH;
 	};
 
 	return (
@@ -127,7 +139,10 @@ const LoginForm = () => {
 						>
 							{isSubmitting || login.isPending ? "Logging in..." : "Login"}
 						</Button>
-						<GoogleButton className="w-full" />
+						<GoogleButton
+							className="w-full"
+							handleGoogleAuth={handleGoogleAuth}
+						/>
 					</div>
 				</form>
 			</CardContent>

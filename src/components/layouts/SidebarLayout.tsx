@@ -139,7 +139,9 @@ const SidebarLayout: React.FC<SidebarLayoutProps> = ({
 						<Breadcrumb>
 							<BreadcrumbList>
 								<BreadcrumbItem className="hidden md:block">
-									<BreadcrumbLink>{breadcrumbText} Dashboard</BreadcrumbLink>
+									<BreadcrumbLink className="cursor-pointer">
+										{breadcrumbText} Dashboard
+									</BreadcrumbLink>
 								</BreadcrumbItem>
 								<BreadcrumbSeparator className="hidden md:block" />
 								<BreadcrumbItem>

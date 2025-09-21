@@ -1,13 +1,10 @@
-import { useEffect, useState } from "react";
 import { useInfiniteUsers } from "@/services/userService";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import UserCard from "@/components/common/UserCard";
-import type { User } from "@/types/auth";
 
 const AdminUser = () => {
 	const limit = 10;
-	const [usersData, setUsersData] = useState<User[]>([]);
 	const {
 		data: users,
 		isLoading,
@@ -16,14 +13,8 @@ const AdminUser = () => {
 		isError,
 	} = useInfiniteUsers(limit);
 
-	useEffect(() => {
-		setUsersData((prev) => {
-			if (users?.pages[0]?.users !== undefined) {
-				return [...prev, ...users.pages[users.pages.length - 1].users];
-			}
-			return prev;
-		});
-	}, [users?.pages]);
+	// Flatten all pages into a single array
+	const allUsers = users?.pages.flatMap((page) => page.users) || [];
 
 	if (isError) {
 		return (
@@ -40,7 +31,7 @@ const AdminUser = () => {
 					<Loader2 className="w-4 h-4 animate-spin" />
 				</div>
 			) : (
-				usersData?.map((user) => <UserCard key={user.id} user={user} />)
+				allUsers.map((user) => <UserCard key={user.id} user={user} />)
 			)}
 			{hasNextPage && (
 				<div className="flex justify-center items-center">

@@ -74,6 +74,23 @@ export const PaymentStatus = {
 } as const;
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus];
 
+// --- PaymentSuccessState ---
+export const PaymentSuccessState = {
+	Success: "Success",
+	Failed: "Failed",
+	Loading: "Loading",
+} as const;
+export type PaymentSuccessState =
+	(typeof PaymentSuccessState)[keyof typeof PaymentSuccessState];
+
+// --- LeaseStatus ---
+export const LeaseStatus = {
+	Active: "Active",
+	Pending: "Pending",
+	Terminated: "Terminated",
+} as const;
+export type LeaseStatus = (typeof LeaseStatus)[keyof typeof LeaseStatus];
+
 // This helper function now works perfectly with no errors
 export const getEnumValues = <T extends Record<string, string>>(
 	enumObject: T

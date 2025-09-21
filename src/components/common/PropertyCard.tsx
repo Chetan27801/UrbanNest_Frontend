@@ -19,8 +19,7 @@ const PropertyCard = ({ property }: { property: Property }) => {
 				<div className="flex flex-col gap-2">
 					<div className="relative">
 						<img
-							src="https://plus.unsplash.com/premium_photo-1661883982941-50af7720a6ff?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-							alt="Property Image"
+							src={property.photoUrls[0]}
 							className="w-full h-48 object-cover rounded-lg"
 						/>
 						<div className="absolute top-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-all duration-300 cursor-pointer">

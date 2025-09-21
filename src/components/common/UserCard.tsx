@@ -5,7 +5,16 @@ import { Badge } from "../ui/badge";
 import { Mail, Phone, CheckCircle, ShieldAlert } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
-const UserCard = ({ user }: { user: User }) => {
+interface UserWithTotalProperties extends User {
+	totalProperties?: number;
+}
+
+interface UserCardProps {
+	user: UserWithTotalProperties;
+	isTenant?: boolean;
+}
+
+const UserCard = ({ user, isTenant }: UserCardProps) => {
 	const verificationClasses = user.isVerified
 		? "border-green-300 bg-green-50 text-green-700"
 		: "border-yellow-300 bg-yellow-50 text-yellow-700";
@@ -17,7 +26,7 @@ const UserCard = ({ user }: { user: User }) => {
 					<Avatar className="w-20 h-20 border-2 border-white shadow-sm">
 						<AvatarImage src={user.avatar || ""} alt={user.name} />
 						<AvatarFallback className="text-2xl">
-							{user.name.charAt(0).toUpperCase()}
+							{user?.name?.charAt(0).toUpperCase() || "T"}
 						</AvatarFallback>
 					</Avatar>
 					{user.isOnline && (
@@ -67,6 +76,11 @@ const UserCard = ({ user }: { user: User }) => {
 							</a>
 						)}
 					</div>
+					{isTenant && (
+						<p className="text-xs text-slate-400 mt-3 text-right">
+							Total Properties: {user.totalProperties}
+						</p>
+					)}
 
 					<p className="text-xs text-slate-400 mt-3 text-right">
 						Last active:{" "}

@@ -41,6 +41,8 @@ import { Amenity, Highlight, PropertyType, getEnumValues } from "@/utils/enums";
 import { useCreateProperty } from "@/services/propertyService";
 import { uploadFile } from "@/utils/uploadFile";
 import { FaRupeeSign } from "react-icons/fa";
+import toast from "react-hot-toast";
+import type { ErrorResponse } from "@/types/error";
 
 interface PropertyFormProps {
 	className?: string;
@@ -73,6 +75,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ className }) => {
 		handleSubmit,
 		watch,
 		setValue,
+		reset,
 		formState: { errors, isDirty },
 	} = useForm<CreatePropertyInput>({
 		resolver: zodResolver(createPropertySchema),
@@ -152,6 +155,11 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ className }) => {
 		[setValue]
 	);
 
+	const removeAllImages = useCallback(() => {
+		setImagePreviews([]);
+		setValue("photoUrls", [], { shouldDirty: true });
+	}, [setValue]);
+
 	const handleDrag = useCallback((e: React.DragEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -207,8 +215,23 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ className }) => {
 
 			const parsed = createPropertySchemaWithImages.parse(propertyData);
 
-			await createProperty(parsed as CreatePropertyTypeWithImages);
+			await createProperty(parsed as CreatePropertyTypeWithImages, {
+				onSuccess: () => {
+					toast.success("Property created successfully.");
+					removeAllImages();
+					reset();
+				},
+				onError: (error: unknown) => {
+					const errorMessage =
+						error instanceof Error && "message" in error
+							? (error as ErrorResponse)?.message
+							: "Failed to create property";
+					toast.error(errorMessage);
+					console.error(error);
+				},
+			});
 		} catch (error) {
+			toast.error("Error creating property.");
 			console.error("Error creating property:", error);
 		}
 	};
@@ -760,7 +783,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ className }) => {
 								</Label>
 								<Input
 									id="address"
-									placeholder="123 Main Street, Apt 4B"
+									placeholder="Krishna Nagar, E-Block"
 									className="h-11"
 									{...register("location.address")}
 								/>
@@ -777,7 +800,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ className }) => {
 								</Label>
 								<Input
 									id="city"
-									placeholder="New York"
+									placeholder="Delhi"
 									className="h-11"
 									{...register("location.city")}
 								/>
@@ -794,7 +817,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ className }) => {
 								</Label>
 								<Input
 									id="state"
-									placeholder="NY"
+									placeholder="Delhi"
 									className="h-11"
 									{...register("location.state")}
 								/>
@@ -827,7 +850,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ className }) => {
 								</Label>
 								<Input
 									id="postalCode"
-									placeholder="10001"
+									placeholder="110001"
 									className="h-11"
 									{...register("location.postalCode")}
 								/>

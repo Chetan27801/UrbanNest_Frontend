@@ -1,8 +1,8 @@
 import {
 	FilterIcon,
 	FilterXIcon,
-	GridIcon,
-	ListIcon,
+	// GridIcon,
+	// ListIcon,
 	SearchIcon,
 } from "lucide-react";
 import { Button } from "../ui/button";
@@ -10,7 +10,7 @@ import { Input } from "../ui/input";
 import { SelectDropDown } from "./SelectDropDown";
 import { PropertyType } from "@/utils/enums";
 import DatePicker from "./DatePicker";
-import { Separator } from "../ui/separator";
+// import { Separator } from "../ui/separator";
 import type { PropertySearchFilters } from "@/types/property";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useEffect, useState } from "react";
@@ -43,7 +43,7 @@ const TopFilterSearch = ({
 }) => {
 	// local input for search to avoid double updates
 	const [searchInput, setSearchInput] = useState(filters.search);
-	const debouncedSearch = useDebounce(searchInput, 500);
+	const debouncedSearch = useDebounce(searchInput, 1000);
 
 	// keep local input in sync when parent changes (e.g., via URL)
 	useEffect(() => {
@@ -56,34 +56,40 @@ const TopFilterSearch = ({
 	}, [debouncedSearch, updateFilter]);
 
 	return (
-		<div className="flex flex-row p-4 w-full items-center gap-4 bg-white">
-			{/* Filter Button */}
-			<Button
-				variant="outline"
-				className="flex items-center gap-2"
-				onClick={handleFilter}
-			>
-				{isFilter ? (
-					<FilterXIcon className="w-4 h-4" />
-				) : (
-					<FilterIcon className="w-4 h-4" />
-				)}
-				{isFilter ? "Hide Filters" : "Show Filters"}
-			</Button>
+		<div className="flex flex-col lg:flex-row p-4 w-full items-start lg:items-center gap-4 bg-white">
+			{/* Top Row - Filter Button and Search */}
+			<div className="flex flex-row w-full lg:w-auto items-center gap-4">
+				{/* Filter Button */}
+				<Button
+					variant="outline"
+					className="flex items-center gap-2 transition-all duration-200 hover:scale-105"
+					onClick={handleFilter}
+				>
+					{isFilter ? (
+						<FilterXIcon className="w-4 h-4" />
+					) : (
+						<FilterIcon className="w-4 h-4" />
+					)}
+					<span className="hidden sm:inline">
+						{isFilter ? "Hide Filters" : "Show Filters"}
+					</span>
+				</Button>
 
-			{/* Search Bar */}
-			<div className="flex flex-row justify-center relative w-80">
-				<Input
-					type="text"
-					placeholder="Search"
-					value={searchInput}
-					onChange={(e) => setSearchInput(e.target.value)}
-					className="focus-visible:ring-1"
-				/>
-				<SearchIcon className="w-4 h-4 absolute right-6 top-1/2 -translate-y-1/2 text-gray-500" />
+				{/* Search Bar */}
+				<div className="flex flex-row justify-center relative flex-1 lg:w-80 lg:flex-initial">
+					<Input
+						type="text"
+						placeholder="Search properties..."
+						value={searchInput}
+						onChange={(e) => setSearchInput(e.target.value)}
+						className="focus-visible:ring-1 transition-all duration-200 focus:scale-[1.02]"
+					/>
+					<SearchIcon className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-gray-500" />
+				</div>
 			</div>
 
-			<div className="flex flex-row gap-3 flex-1">
+			{/* Bottom Row - Filter Controls */}
+			<div className="flex flex-wrap lg:flex-nowrap gap-2 lg:gap-3 flex-1 w-full lg:w-auto">
 				{/* Price Range - map labels to numeric min/max */}
 				<SelectDropDown
 					field={{
@@ -137,28 +143,32 @@ const TopFilterSearch = ({
 					]}
 					placeholder="Baths"
 				/>
-				<SelectDropDown
-					field={{
-						onChange: (value: string) => {
-							updateFilter("propertyType", value as PropertyType);
-						},
-						value: filters.propertyType || "",
-					}}
-					options={[
-						{ label: "Apartment", value: PropertyType.Apartment },
-						{ label: "Villa", value: PropertyType.Villa },
-						{ label: "Townhouse", value: PropertyType.Townhouse },
-						{ label: "Cottage", value: PropertyType.Cottage },
-						{ label: "Tinyhouse", value: PropertyType.Tinyhouse },
-						{ label: "Rooms", value: PropertyType.Rooms },
-					]}
-					placeholder="Property Type"
-				/>
-				<DatePicker
-					date={filters.moveInDate}
-					setDate={(date) => updateFilter("moveInDate", date)}
-					label="Move In Date"
-				/>
+				<div className="hidden sm:block">
+					<SelectDropDown
+						field={{
+							onChange: (value: string) => {
+								updateFilter("propertyType", value as PropertyType);
+							},
+							value: filters.propertyType || "",
+						}}
+						options={[
+							{ label: "Apartment", value: PropertyType.Apartment },
+							{ label: "Villa", value: PropertyType.Villa },
+							{ label: "Townhouse", value: PropertyType.Townhouse },
+							{ label: "Cottage", value: PropertyType.Cottage },
+							{ label: "Tinyhouse", value: PropertyType.Tinyhouse },
+							{ label: "Rooms", value: PropertyType.Rooms },
+						]}
+						placeholder="Property Type"
+					/>
+				</div>
+				<div className="hidden md:block">
+					<DatePicker
+						date={filters.moveInDate}
+						setDate={(date) => updateFilter("moveInDate", date)}
+						label="Move In Date"
+					/>
+				</div>
 				<SelectDropDown
 					field={{
 						onChange: (value: string) =>
@@ -177,15 +187,22 @@ const TopFilterSearch = ({
 				/>
 			</div>
 
-			<div className="flex flex-row justify-center relative rounded-lg border border-gray-200 bg-gray-50">
-				<Button variant="ghost" className="hover:bg-gray-100">
+			{/* View Toggle */}
+			{/* <div className="hidden lg:flex flex-row justify-center relative rounded-lg border border-gray-200 bg-gray-50">
+				<Button
+					variant="ghost"
+					className="hover:bg-gray-100 transition-colors duration-200"
+				>
 					<GridIcon className="w-4 h-4" />
 				</Button>
 				<Separator orientation="vertical" className="h-6" />
-				<Button variant="ghost" className="hover:bg-gray-100">
+				<Button
+					variant="ghost"
+					className="hover:bg-gray-100 transition-colors duration-200"
+				>
 					<ListIcon className="w-4 h-4" />
 				</Button>
-			</div>
+			</div> */}
 		</div>
 	);
 };

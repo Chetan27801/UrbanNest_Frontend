@@ -13,10 +13,9 @@ import {
 	type PropertyResponse,
 	type PropertyDetailResponse,
 	type PropertySearchFilters,
+	type PropertyDataForHomeResponse,
 } from "@/types/property";
-import type {
-	CreatePropertyTypeWithImages,
-} from "@/schema/property.schema";
+import type { CreatePropertyTypeWithImages } from "@/schema/property.schema";
 
 export const propertyApiFunctions = {
 	getProperties: async (
@@ -54,6 +53,15 @@ export const propertyApiFunctions = {
 	},
 	createProperty: async (data: CreatePropertyTypeWithImages) => {
 		const response = await api.post(API_ENDPOINTS.PROPERTIES.CREATE, data);
+		return response.data;
+	},
+
+	getPropertyDataForHome: async (
+		type: string
+	): Promise<PropertyDataForHomeResponse> => {
+		const response = await api.get(
+			API_ENDPOINTS.STATS.PUBLIC.PROPERTY_DATA_FOR_HOME(type)
+		);
 		return response.data;
 	},
 };
@@ -131,5 +139,12 @@ export const useCreateProperty = () => {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: QUERY_KEYS.properties.all });
 		},
+	});
+};
+
+export const useGetPropertyDataForHome = (type: string) => {
+	return useQuery({
+		queryKey: QUERY_KEYS.stats.propertyDataForHome(type),
+		queryFn: () => propertyApiFunctions.getPropertyDataForHome(type),
 	});
 };

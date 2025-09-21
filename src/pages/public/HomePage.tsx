@@ -8,6 +8,7 @@ import {
 	CardContent,
 	CardFooter,
 } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import heroImage from "@/assets/hero_image.jpg";
 import {
 	FileIcon,
@@ -15,9 +16,163 @@ import {
 	MessageCircleIcon,
 	SearchIcon,
 	ShieldCheckIcon,
+	StarIcon,
+	MapPinIcon,
+	HeartIcon,
+	TrendingUpIcon,
+	UsersIcon,
+	BuildingIcon,
+	FilterIcon,
 } from "lucide-react";
+import { useGetPropertyDataForHome } from "@/services/propertyService";
+import { useState, useMemo } from "react";
+import { PropertyType } from "@/utils/enums";
+import type { Property } from "@/types/property";
+import { useAuth } from "@/hooks";
 
 const HomePage = () => {
+	const [propertyType, setPropertyType] = useState<string>("all");
+	const [favorites, setFavorites] = useState<Set<string>>(new Set());
+	const { user } = useAuth();
+	const {
+		data: propertyDataForHome,
+		isLoading,
+		error,
+	} = useGetPropertyDataForHome(propertyType);
+
+	// Memoized calculations for performance using new API data
+	const propertyStats = useMemo(() => {
+		if (!propertyDataForHome?.data) return null;
+
+		const apiData = propertyDataForHome.data;
+		const properties = apiData.properties;
+
+		if (!properties || properties.length === 0) return null;
+
+		return {
+			// Use API provided totals
+			totalProperties: apiData.totalProperties,
+			totalAvailableProperties: apiData.totalAvailableProperties,
+			totalUsers: apiData.totalUsers,
+			totalApplications: apiData.totalApplications,
+
+			// Calculate from current filtered properties
+			featuredProperties: properties.length,
+			averagePrice: Math.round(
+				properties.reduce((acc, p) => acc + p.pricePerMonth, 0) /
+					properties.length
+			),
+			averageRating: (
+				properties.reduce((acc, p) => acc + p.averageRating, 0) /
+				properties.length
+			).toFixed(1),
+			availableInFeatured: properties.filter((p) => p.isAvailable).length,
+			propertyTypes: new Set(properties.map((p) => p.propertyType)).size,
+			totalReviews: properties.reduce((acc, p) => acc + p.numberOfReviews, 0),
+		};
+	}, [propertyDataForHome?.data]);
+
+	const toggleFavorite = (propertyId: string) => {
+		setFavorites((prev) => {
+			const newFavorites = new Set(prev);
+			if (newFavorites.has(propertyId)) {
+				newFavorites.delete(propertyId);
+			} else {
+				newFavorites.add(propertyId);
+			}
+			return newFavorites;
+		});
+	};
+
+	const PropertyCard = ({ property }: { property: Property }) => (
+		<Card className="overflow-hidden rounded-xl border-0 shadow-lg hover:shadow-2xl transition-all duration-500 group cursor-pointer bg-white">
+			<div className="relative">
+				<img
+					src={
+						property.photoUrls?.[0] ||
+						"https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=300"
+					}
+					alt={property.name}
+					className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-110"
+					onError={(e) => {
+						e.currentTarget.src =
+							"https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=300";
+					}}
+				/>
+
+				{/* Favorite Icon */}
+				<div className="absolute top-4 right-4 z-10">
+					<div
+						className="bg-white/90 backdrop-blur-sm rounded-full p-2 hover:bg-white transition-colors cursor-pointer"
+						onClick={(e) => {
+							e.stopPropagation();
+							toggleFavorite(property._id);
+						}}
+					>
+						<HeartIcon
+							className={`w-4 h-4 transition-colors ${
+								favorites.has(property._id)
+									? "text-red-500 fill-red-500"
+									: "text-gray-600 hover:text-red-500"
+							}`}
+						/>
+					</div>
+				</div>
+			</div>
+
+			<CardContent className="p-6">
+				<div className="space-y-4">
+					{/* Property Name */}
+					<div>
+						<CardTitle className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
+							{property.name}
+						</CardTitle>
+					</div>
+
+					{/* Location */}
+					<div className="flex items-center text-gray-600 text-sm">
+						<MapPinIcon className="w-4 h-4 mr-2 flex-shrink-0" />
+						<span className="line-clamp-1">
+							{property.location.city}, {property.location.state}
+						</span>
+					</div>
+
+					{/* Rating */}
+					{property.averageRating > 0 && (
+						<div className="flex items-center gap-2">
+							<div className="flex items-center">
+								<StarIcon className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+								<span className="text-sm font-medium text-gray-900 ml-1">
+									{property.averageRating.toFixed(1)}
+								</span>
+							</div>
+							<span className="text-sm text-gray-500">
+								({property.numberOfReviews} reviews)
+							</span>
+						</div>
+					)}
+
+					{/* Price and CTA */}
+					<div className="flex items-center justify-between pt-4 border-t border-gray-100">
+						<div>
+							<span className="text-2xl font-bold text-gray-900">
+								{"₹" + property.pricePerMonth.toLocaleString()}
+							</span>
+							<span className="text-gray-600 text-sm">/month</span>
+						</div>
+						<Button
+							size="sm"
+							className="bg-cyan-600 hover:bg-cyan-700 text-white"
+							asChild
+						>
+							<Link to={`/properties/${property._id}`}>View Details</Link>
+						</Button>
+					</div>
+				</div>
+			</CardContent>
+		</Card>
+	);
+
 	return (
 		<div className="min-h-screen">
 			{/* Hero Section */}
@@ -178,253 +333,129 @@ const HomePage = () => {
 					{/* Property Categories */}
 					<div className="flex flex-wrap justify-center gap-4 mb-12">
 						<Button
-							variant="default"
-							className="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-2 rounded-full"
+							variant={propertyType === "all" ? "default" : "outline"}
+							className={`px-6 py-2 rounded-full transition-all duration-300 ${
+								propertyType === "all"
+									? "bg-cyan-600 hover:bg-cyan-700 text-white"
+									: "border-cyan-600 text-cyan-600 hover:bg-cyan-600 hover:text-white"
+							}`}
+							onClick={() => setPropertyType("all")}
 						>
+							<FilterIcon className="w-4 h-4 mr-2" />
 							All Properties
 						</Button>
 						<Button
-							variant="outline"
-							className="border-cyan-600 text-cyan-600 hover:bg-cyan-600 hover:text-white px-6 py-2 rounded-full"
+							variant={
+								propertyType === PropertyType.Apartment ? "default" : "outline"
+							}
+							className={`px-6 py-2 rounded-full transition-all duration-300 ${
+								propertyType === PropertyType.Apartment
+									? "bg-cyan-600 hover:bg-cyan-700 text-white"
+									: "border-cyan-600 text-cyan-600 hover:bg-cyan-600 hover:text-white"
+							}`}
+							onClick={() => setPropertyType(PropertyType.Apartment)}
 						>
+							<BuildingIcon className="w-4 h-4 mr-2" />
 							Apartments
 						</Button>
 						<Button
-							variant="outline"
-							className="border-cyan-600 text-cyan-600 hover:bg-cyan-600 hover:text-white px-6 py-2 rounded-full"
+							variant={
+								propertyType === PropertyType.Villa ? "default" : "outline"
+							}
+							className={`px-6 py-2 rounded-full transition-all duration-300 ${
+								propertyType === PropertyType.Villa
+									? "bg-cyan-600 hover:bg-cyan-700 text-white"
+									: "border-cyan-600 text-cyan-600 hover:bg-cyan-600 hover:text-white"
+							}`}
+							onClick={() => setPropertyType(PropertyType.Villa)}
 						>
-							Houses
+							<HomeIcon className="w-4 h-4 mr-2" />
+							Villas
 						</Button>
 						<Button
-							variant="outline"
-							className="border-cyan-600 text-cyan-600 hover:bg-cyan-600 hover:text-white px-6 py-2 rounded-full"
+							variant={
+								propertyType === PropertyType.Townhouse ? "default" : "outline"
+							}
+							className={`px-6 py-2 rounded-full transition-all duration-300 ${
+								propertyType === PropertyType.Townhouse
+									? "bg-cyan-600 hover:bg-cyan-700 text-white"
+									: "border-cyan-600 text-cyan-600 hover:bg-cyan-600 hover:text-white"
+							}`}
+							onClick={() => setPropertyType(PropertyType.Townhouse)}
 						>
-							Luxury
+							<UsersIcon className="w-4 h-4 mr-2" />
+							Townhouses
 						</Button>
 					</div>
 
-					{/* Masonry Gallery Grid */}
-					<div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-						{/* Featured Property - Large */}
-						<Card className="break-inside-avoid overflow-hidden rounded-xl border-0 shadow-lg hover:shadow-2xl transition-all duration-500 group cursor-pointer bg-white mb-6">
-							<div className="relative">
-								<img
-									src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=500&h=600"
-									alt="Modern luxury villa with pool"
-									className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-110"
-								/>
-								<div className="absolute top-6 left-6 z-10">
-									<span className="bg-cyan-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-										Featured
-									</span>
-								</div>
-								<div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500">
-									<CardContent className="absolute bottom-0 left-0 right-0 text-white p-6">
-										<div className="transform translate-y-6 group-hover:translate-y-0 transition-transform duration-500">
-											<CardTitle className="text-xl font-bold text-white mb-3">
-												Modern Luxury Villa
-											</CardTitle>
-											<CardDescription className="text-gray-200 mb-4 text-sm">
-												Stunning 4BR villa with pool and garden in prime
-												location
-											</CardDescription>
-											<div className="flex items-center justify-between">
-												<span className="text-xl font-bold text-cyan-400">
-													$3,200/month
-												</span>
-												<Button
-													size="sm"
-													className="bg-white text-gray-900 hover:bg-gray-100"
-												>
-													View Details
-												</Button>
+					{/* Dynamic Property Grid */}
+					{error ? (
+						<div className="text-center py-12">
+							<div className="text-red-500 mb-4">
+								<HomeIcon className="w-16 h-16 mx-auto mb-4 opacity-50" />
+							</div>
+							<h3 className="text-xl font-semibold text-gray-900 mb-2">
+								Unable to load properties
+							</h3>
+							<p className="text-gray-600">Please try again later.</p>
+						</div>
+					) : isLoading ? (
+						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+							{Array.from({ length: 8 }).map((_, index) => (
+								<Card
+									key={index}
+									className="overflow-hidden rounded-xl border-0 shadow-lg bg-white"
+								>
+									<Skeleton className="w-full h-48" />
+									<CardContent className="p-6">
+										<div className="space-y-4">
+											<Skeleton className="h-6 w-3/4" />
+											<Skeleton className="h-4 w-1/2" />
+											<div className="flex gap-4">
+												<Skeleton className="h-4 w-12" />
+												<Skeleton className="h-4 w-12" />
+												<Skeleton className="h-4 w-16" />
+											</div>
+											<div className="flex justify-between items-center">
+												<Skeleton className="h-8 w-24" />
+												<Skeleton className="h-8 w-20" />
 											</div>
 										</div>
 									</CardContent>
-								</div>
+								</Card>
+							))}
+						</div>
+					) : propertyDataForHome?.data?.properties &&
+					  propertyDataForHome.data.properties.length > 0 ? (
+						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+							{propertyDataForHome.data.properties.map((property) => (
+								<PropertyCard key={property._id} property={property} />
+							))}
+						</div>
+					) : (
+						<div className="text-center py-12">
+							<div className="text-gray-400 mb-4">
+								<SearchIcon className="w-16 h-16 mx-auto mb-4" />
 							</div>
-						</Card>
-
-						{/* Property Card 1 - Square */}
-						<Card className="break-inside-avoid overflow-hidden rounded-xl border-0 shadow-lg hover:shadow-xl transition-all duration-500 group cursor-pointer bg-white mb-6">
-							<div className="relative">
-								<img
-									src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=400"
-									alt="Cozy apartment interior"
-									className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-110"
-								/>
-								<div className="absolute top-4 right-4 z-10">
-									<div className="bg-white/90 backdrop-blur-sm rounded-full p-2">
-										<HomeIcon className="w-4 h-4 text-cyan-600" />
-									</div>
-								</div>
-								<div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500">
-									<CardContent className="absolute bottom-0 left-0 right-0 text-white p-6">
-										<div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-											<CardTitle className="text-lg font-bold text-white mb-2">
-												Cozy Studio Apartment
-											</CardTitle>
-											<CardDescription className="text-gray-200 mb-3 text-sm">
-												Perfect for young professionals
-											</CardDescription>
-											<span className="text-lg font-bold text-cyan-400">
-												$1,200/month
-											</span>
-										</div>
-									</CardContent>
-								</div>
-							</div>
-						</Card>
-
-						{/* Property Card 2 - Tall */}
-						<Card className="break-inside-avoid overflow-hidden rounded-xl border-0 shadow-lg hover:shadow-xl transition-all duration-500 group cursor-pointer bg-white mb-6">
-							<div className="relative">
-								<img
-									src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=500"
-									alt="Modern penthouse with city view"
-									className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-110"
-								/>
-								<div className="absolute top-4 left-4 z-10">
-									<span className="bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium">
-										New
-									</span>
-								</div>
-								<div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500">
-									<CardContent className="absolute bottom-0 left-0 right-0 text-white p-6">
-										<div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-											<CardTitle className="text-lg font-bold text-white mb-2">
-												City Penthouse
-											</CardTitle>
-											<CardDescription className="text-gray-200 mb-3 text-sm">
-												Luxury living with panoramic views
-											</CardDescription>
-											<span className="text-lg font-bold text-cyan-400">
-												$4,500/month
-											</span>
-										</div>
-									</CardContent>
-								</div>
-							</div>
-						</Card>
-
-						{/* Property Card 3 - Wide */}
-						<Card className="break-inside-avoid overflow-hidden rounded-xl border-0 shadow-lg hover:shadow-xl transition-all duration-500 group cursor-pointer bg-white mb-6">
-							<div className="relative">
-								<img
-									src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500&h=300"
-									alt="Elegant townhouse"
-									className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-110"
-								/>
-								<div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500">
-									<CardContent className="absolute bottom-0 left-0 right-0 text-white p-6">
-										<div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-											<CardTitle className="text-lg font-bold text-white mb-2">
-												Elegant Townhouse
-											</CardTitle>
-											<CardDescription className="text-gray-200 mb-3 text-sm">
-												Spacious 3BR family home
-											</CardDescription>
-											<span className="text-lg font-bold text-cyan-400">
-												$2,800/month
-											</span>
-										</div>
-									</CardContent>
-								</div>
-							</div>
-						</Card>
-
-						{/* Property Card 4 - Standard */}
-						<Card className="break-inside-avoid overflow-hidden rounded-xl border-0 shadow-lg hover:shadow-xl transition-all duration-500 group cursor-pointer bg-white mb-6">
-							<div className="relative">
-								<img
-									src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=350"
-									alt="Modern apartment"
-									className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-110"
-								/>
-								<div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500">
-									<CardContent className="absolute bottom-0 left-0 right-0 text-white p-6">
-										<div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-											<CardTitle className="text-lg font-bold text-white mb-2">
-												Modern Apartment
-											</CardTitle>
-											<CardDescription className="text-gray-200 mb-3 text-sm">
-												Stylish 2BR in trendy neighborhood
-											</CardDescription>
-											<span className="text-lg font-bold text-cyan-400">
-												$1,800/month
-											</span>
-										</div>
-									</CardContent>
-								</div>
-							</div>
-						</Card>
-
-						{/* Property Card 5 - Waterfront */}
-						<Card className="break-inside-avoid overflow-hidden rounded-xl border-0 shadow-lg hover:shadow-xl transition-all duration-500 group cursor-pointer bg-white mb-6">
-							<div className="relative">
-								<img
-									src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500&h=400"
-									alt="Waterfront property"
-									className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-110"
-								/>
-								<div className="absolute top-6 left-6 z-10">
-									<span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-										Available Now
-									</span>
-								</div>
-								<div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500">
-									<CardContent className="absolute bottom-0 left-0 right-0 text-white p-6">
-										<div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-											<CardTitle className="text-lg font-bold text-white mb-3">
-												Waterfront Estate
-											</CardTitle>
-											<CardDescription className="text-gray-200 mb-4 text-sm">
-												Breathtaking waterfront views with private dock and
-												gardens
-											</CardDescription>
-											<div className="flex items-center justify-between">
-												<span className="text-lg font-bold text-cyan-400">
-													$5,200/month
-												</span>
-												<Button
-													size="sm"
-													className="bg-white text-gray-900 hover:bg-gray-100"
-												>
-													Schedule Tour
-												</Button>
-											</div>
-										</div>
-									</CardContent>
-								</div>
-							</div>
-						</Card>
-
-						{/* Property Card 6 - Extra Interior */}
-						<Card className="break-inside-avoid overflow-hidden rounded-xl border-0 shadow-lg hover:shadow-xl transition-all duration-500 group cursor-pointer bg-white mb-6">
-							<div className="relative">
-								<img
-									src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=450"
-									alt="Luxury interior design"
-									className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-110"
-								/>
-								<div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500">
-									<CardContent className="absolute bottom-0 left-0 right-0 text-white p-6">
-										<div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-											<CardTitle className="text-lg font-bold text-white mb-2">
-												Designer Loft
-											</CardTitle>
-											<CardDescription className="text-gray-200 mb-3 text-sm">
-												Artistic space in creative district
-											</CardDescription>
-											<span className="text-lg font-bold text-cyan-400">
-												$2,200/month
-											</span>
-										</div>
-									</CardContent>
-								</div>
-							</div>
-						</Card>
-					</div>
+							<h3 className="text-xl font-semibold text-gray-900 mb-2">
+								No properties found
+							</h3>
+							<p className="text-gray-600 mb-6">
+								{propertyType === "all"
+									? "No properties are currently available."
+									: `No ${propertyType.toLowerCase()} properties found. Try a different category.`}
+							</p>
+							{propertyType !== "all" && (
+								<Button
+									variant="outline"
+									onClick={() => setPropertyType("all")}
+									className="border-cyan-600 text-cyan-600 hover:bg-cyan-600 hover:text-white"
+								>
+									View All Properties
+								</Button>
+							)}
+						</div>
+					)}
 
 					{/* View All Properties Button */}
 					<div className="text-center mt-12">
@@ -443,6 +474,126 @@ const HomePage = () => {
 					</div>
 				</div>
 			</section>
+
+			{/* Market Insights Section */}
+			{propertyStats && (
+				<section className="py-20 bg-white">
+					<div className="max-w-7xl mx-auto px-6">
+						<div className="text-center mb-16">
+							<h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+								Market <span className="text-cyan-600">Insights</span>
+							</h2>
+							<p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+								Get real-time insights into our property market and discover the
+								best opportunities
+							</p>
+						</div>
+
+						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+							{/* Average Price */}
+							<Card className="text-center p-6 hover:shadow-xl transition-shadow duration-300 border-0 shadow-lg">
+								<div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-4">
+									<TrendingUpIcon className="w-8 h-8 text-white" />
+								</div>
+								<CardTitle className="text-3xl font-bold text-gray-900 mb-2">
+									${propertyStats.averagePrice.toLocaleString()}
+								</CardTitle>
+								<CardDescription className="text-gray-600 font-medium">
+									Average Monthly Rent
+								</CardDescription>
+								<div className="mt-2 text-sm text-green-600">
+									From {propertyStats.featuredProperties} featured properties
+								</div>
+							</Card>
+
+							{/* Total Properties */}
+							<Card className="text-center p-6 hover:shadow-xl transition-shadow duration-300 border-0 shadow-lg">
+								<div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+									<BuildingIcon className="w-8 h-8 text-white" />
+								</div>
+								<CardTitle className="text-3xl font-bold text-gray-900 mb-2">
+									{propertyStats.totalProperties.toLocaleString()}
+								</CardTitle>
+								<CardDescription className="text-gray-600 font-medium">
+									Total Properties
+								</CardDescription>
+								<div className="mt-2 text-sm text-blue-600">
+									{propertyStats.propertyTypes} different types
+								</div>
+							</Card>
+
+							{/* Average Rating */}
+							<Card className="text-center p-6 hover:shadow-xl transition-shadow duration-300 border-0 shadow-lg">
+								<div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4">
+									<StarIcon className="w-8 h-8 text-white" />
+								</div>
+								<CardTitle className="text-3xl font-bold text-gray-900 mb-2">
+									{propertyStats.averageRating}
+								</CardTitle>
+								<CardDescription className="text-gray-600 font-medium">
+									Average Property Rating
+								</CardDescription>
+								<div className="mt-2 text-sm text-yellow-600">
+									{propertyStats.totalReviews} total reviews
+								</div>
+							</Card>
+
+							{/* Available Properties */}
+							<Card className="text-center p-6 hover:shadow-xl transition-shadow duration-300 border-0 shadow-lg">
+								<div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+									<HomeIcon className="w-8 h-8 text-white" />
+								</div>
+								<CardTitle className="text-3xl font-bold text-gray-900 mb-2">
+									{propertyStats.totalAvailableProperties.toLocaleString()}
+								</CardTitle>
+								<CardDescription className="text-gray-600 font-medium">
+									Available Properties
+								</CardDescription>
+								<div className="mt-2 text-sm text-green-600">
+									Ready to move in
+								</div>
+							</Card>
+						</div>
+
+						{/* Quick Stats Bar */}
+						<div className="mt-16 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-2xl p-8">
+							<div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+								<div>
+									<div className="text-2xl font-bold text-gray-900">
+										{propertyStats.totalProperties.toLocaleString()}
+									</div>
+									<div className="text-sm text-gray-600">Total Properties</div>
+								</div>
+								<div>
+									<div className="text-2xl font-bold text-gray-900">
+										{Math.round(
+											(propertyStats.totalAvailableProperties /
+												propertyStats.totalProperties) *
+												100
+										)}
+										%
+									</div>
+									<div className="text-sm text-gray-600">Availability Rate</div>
+								</div>
+								<div>
+									<div className="text-2xl font-bold text-gray-900">
+										{propertyStats.totalUsers.toLocaleString()}
+									</div>
+									<div className="text-sm text-gray-600">Registered Users</div>
+								</div>
+								<div>
+									<div className="text-2xl font-bold text-gray-900">
+										{propertyStats.totalApplications.toLocaleString()}
+									</div>
+									<div className="text-sm text-gray-600">
+										Total Applications
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+			)}
 
 			{/* Find Your Dream Property Section */}
 			<section className="py-20 bg-gray-900 text-white">
@@ -522,24 +673,26 @@ const HomePage = () => {
 									className="bg-cyan-600 hover:bg-cyan-700 text-white px-8 py-4 text-lg font-semibold rounded-lg transition-all duration-300 hover:scale-105"
 								>
 									<Link
-										to="/register"
+										to={user ? "/dashboard" : "/register"}
 										className="w-full h-full flex items-center justify-center"
 									>
 										Start Now
 									</Link>
 								</Button>
-								<Button
-									size="lg"
-									variant="ghost"
-									className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-4 text-lg font-semibold rounded-lg transition-all duration-300 hover:scale-105"
-								>
-									<Link
-										to="/login"
-										className="w-full h-full flex items-center justify-center"
+								{!user && (
+									<Button
+										size="lg"
+										variant="ghost"
+										className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-4 text-lg font-semibold rounded-lg transition-all duration-300 hover:scale-105"
 									>
-										Sign Up
-									</Link>
-								</Button>
+										<Link
+											to="/login"
+											className="w-full h-full flex items-center justify-center"
+										>
+											Sign Up
+										</Link>
+									</Button>
+								)}
 							</div>
 						</div>
 
@@ -562,10 +715,10 @@ const HomePage = () => {
 									</div>
 									<div>
 										<CardTitle className="text-sm text-gray-900">
-											5,000+
+											{propertyStats?.totalProperties.toLocaleString() || 0}
 										</CardTitle>
 										<CardDescription className="text-xs text-gray-600">
-											Active Listings
+											Total Properties
 										</CardDescription>
 									</div>
 								</CardContent>
@@ -574,14 +727,14 @@ const HomePage = () => {
 							<Card className="absolute -bottom-6 -right-6 border-0 shadow-xl">
 								<CardContent className="flex items-center gap-3 p-4">
 									<div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-										<HomeIcon className="w-6 h-6 text-blue-600" />
+										<UsersIcon className="w-6 h-6 text-blue-600" />
 									</div>
 									<div>
 										<CardTitle className="text-sm text-gray-900">
-											1,000+
+											{propertyStats?.totalUsers.toLocaleString() || 0}
 										</CardTitle>
 										<CardDescription className="text-xs text-gray-600">
-											Happy Tenants
+											Registered Users
 										</CardDescription>
 									</div>
 								</CardContent>

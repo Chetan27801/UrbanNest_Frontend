@@ -27,6 +27,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
+import type { ErrorResponse } from "@/types/error";
+import API_ENDPOINTS from "@/utils/apiConstant";
 
 const RegisterForm = () => {
 	const queryClient = useQueryClient();
@@ -53,16 +55,26 @@ const RegisterForm = () => {
 		}
 	}, [token, navigate]);
 
-	const onSubmit = async (data: RegisterFormData) => {
-		try {
-			await registerMutation.mutateAsync(data);
-			toast.success("Register successful");
-			queryClient.invalidateQueries({ queryKey: ["user"] });
-			navigate("/");
-		} catch (error) {
-			console.error("Register failed:", error);
-			toast.error("Register failed");
-		}
+	const onSubmit = (data: RegisterFormData) => {
+		registerMutation.mutate(data, {
+			onSuccess: () => {
+				toast.success("Register successful");
+				queryClient.invalidateQueries({ queryKey: ["user"] });
+				navigate("/");
+			},
+			onError: (error: unknown) => {
+				const errorMessage =
+					error instanceof Error && "message" in error
+						? (error as ErrorResponse)?.message
+						: "Failed to register";
+				toast.error(errorMessage);
+				console.error(error);
+			},
+		});
+	};
+
+	const handleGoogleAuth = () => {
+		window.location.href = API_ENDPOINTS.AUTH.GOOGLE_AUTH;
 	};
 
 	return (
@@ -172,7 +184,10 @@ const RegisterForm = () => {
 								? "Creating account..."
 								: "Create account"}
 						</Button>
-						<GoogleButton className="w-full" />
+						<GoogleButton
+							className="w-full"
+							handleGoogleAuth={handleGoogleAuth}
+						/>
 					</div>
 				</form>
 			</CardContent>

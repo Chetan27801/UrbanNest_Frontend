@@ -56,13 +56,13 @@ const MapUpdater = ({ properties }: { properties: Property[] }) => {
 			const bounds = properties.map(
 				(p) =>
 					[
-						p.location.coordinates.coordinates[0] as number,
-						p.location.coordinates.coordinates[1] as number,
+						p.location.coordinates.coordinates[1] as number, // latitude
+						p.location.coordinates.coordinates[0] as number, // longitude
 					] as [number, number]
 			);
 			map.fitBounds(bounds, { padding: [50, 50] }); // Add padding
 		}
-	}, []);
+	}, [map, properties]);
 	return null;
 };
 
@@ -112,8 +112,8 @@ const MapView = ({
 					<Marker
 						key={property._id} // Add the required key prop
 						position={[
-							property.location.coordinates.coordinates[0] as number,
-							property.location.coordinates.coordinates[1] as number,
+							property.location.coordinates.coordinates[1] as number, // latitude
+							property.location.coordinates.coordinates[0] as number, // longitude
 						]}
 						icon={createPropertyIcon(property)}
 					>

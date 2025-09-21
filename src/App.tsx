@@ -17,6 +17,9 @@ import SearchPage from "./pages/public/SearchPage";
 import PropertyDetail from "./pages/private/PropertyDetail";
 import { useTokenValidator } from "./hooks/useTokenValidator";
 import "leaflet/dist/leaflet.css";
+import AuthCallbackPage from "./pages/auth/AuthCallbackPage";
+import PaymentSuccess from "./pages/private/PaymentSuccess";
+import PaymentCancel from "./pages/private/PaymentCancel";
 
 function App() {
 	// Automatic token validation
@@ -29,6 +32,7 @@ function App() {
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/register" element={<RegisterPage />} />
 				<Route path="/forgot-password" element={<ForgotPasswordPage />} />
+				<Route path="/auth-callback" element={<AuthCallbackPage />} />
 
 				<Route element={<NavbarLayout />}>
 					<Route element={<FooterLayout />}>
@@ -42,6 +46,8 @@ function App() {
 				</Route>
 
 				<Route path="/dashboard" element={<Dashboard />} />
+				<Route path="/payment/success" element={<PaymentSuccess />} />
+				<Route path="/payment/cancel" element={<PaymentCancel />} />
 			</Routes>
 		</Router>
 	);

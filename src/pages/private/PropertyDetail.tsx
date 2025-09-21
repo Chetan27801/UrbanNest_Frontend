@@ -1,5 +1,7 @@
 import { useParams } from "react-router-dom";
 import { usePropertyById } from "@/services/propertyService";
+import { useCheckApplicationStatus } from "@/services/applicationService";
+import { useAuth } from "@/hooks/useAuth";
 import {
 	BedDouble,
 	Bath,
@@ -20,10 +22,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ApplicationForm from "@/components/forms/ApplicationForm";
 
 const PropertyDetail = () => {
 	const { id } = useParams<{ id: string }>();
 	const { data: property, isLoading, isError } = usePropertyById(id as string);
+	const { user } = useAuth();
+	const { data: applicationStatus, isLoading: isCheckingStatus } =
+		useCheckApplicationStatus(user?.role === "tenant" ? (id as string) : "");
 	console.log(property);
 
 	// A simple mapping for amenities to icons
@@ -80,6 +86,8 @@ const PropertyDetail = () => {
 		highlights,
 		photoUrls,
 		landlord,
+		isAvailable,
+		minLeaseTerm,
 	} = property.data;
 
 	return (
@@ -240,10 +248,50 @@ const PropertyDetail = () => {
 								</div>
 							</CardHeader>
 							<CardContent className="flex flex-col gap-4">
-								<Button size="lg" className="w-full">
-									Apply Now
-								</Button>
-								<Button size="lg" variant="outline" className="w-full">
+								{isAvailable ? (
+									user?.role === "tenant" ? (
+										isCheckingStatus ? (
+											<Button size="lg" className="w-full" disabled>
+												Checking...
+											</Button>
+										) : applicationStatus?.data?.hasApplied ? (
+											<div className="text-center">
+												<div className="flex items-center justify-center gap-2">
+													<CheckCircle className="w-4 h-4 mt-1 text-green-500" />
+													<p className="text-sm text-muted-foreground">
+														Application Submitted
+													</p>
+												</div>
+												<p className="text-sm text-muted-foreground mt-2">
+													Status:{" "}
+													<Badge className="bg-orange-400">
+														{applicationStatus.data.application?.status ||
+															"Pending"}
+													</Badge>
+												</p>
+											</div>
+										) : (
+											<ApplicationForm propertyId={id as string} />
+										)
+									) : (
+										<div>
+											<p className="text-muted-foreground">
+												Only tenants can apply for properties.
+											</p>
+										</div>
+									)
+								) : (
+									<div>
+										<p className="text-muted-foreground">
+											This property is not available for rent.
+										</p>
+									</div>
+								)}
+								<Button
+									size="lg"
+									variant="outline"
+									className="w-full cursor-pointer"
+								>
 									Message
 								</Button>
 								<Separator />
@@ -269,6 +317,12 @@ const PropertyDetail = () => {
 										<span className="font-semibold">
 											₹{applicationFee.toLocaleString()}
 										</span>
+									</div>
+									<div className="flex justify-between">
+										<span className="text-muted-foreground">
+											Minimum Lease Term
+										</span>
+										<span className="font-semibold">{minLeaseTerm} months</span>
 									</div>
 								</div>
 							</CardContent>

@@ -8,6 +8,7 @@ import { queryClient } from "./lib/queryClient.ts";
 import { Provider } from "react-redux";
 import { store, persistor } from "@/store";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import AppToast from "./components/common/AppToast";
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
@@ -15,6 +16,7 @@ createRoot(document.getElementById("root")!).render(
 			<PersistGate loading={<div>Loading...</div>} persistor={persistor}>
 				<QueryClientProvider client={queryClient}>
 					<App />
+					<AppToast />
 					<ReactQueryDevtools initialIsOpen={false} />
 				</QueryClientProvider>
 			</PersistGate>

@@ -110,3 +110,15 @@ export interface PropertyDetailResponse {
 	message: string;
 	data: Property;
 }
+
+export interface PropertyDataForHomeResponse {
+	success: boolean;
+	message: string;
+	data: {
+		properties: Property[];
+		totalProperties: number;
+		totalAvailableProperties: number;
+		totalUsers: number;
+		totalApplications: number;
+	};
+}

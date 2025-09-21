@@ -62,9 +62,10 @@ const LeftFilterSidebar = ({
 	return (
 		<div
 			className={cn(
-				"flex p-6 bg-white rounded-lg shadow-sm border flex-col gap-6",
+				"flex p-6 bg-white rounded-xl shadow-sm border flex-col gap-6 overflow-hidden",
 				className
 			)}
+			style={{ scrollBehavior: "smooth" }}
 		>
 			{/* Property Type Section */}
 			<div className="flex flex-col gap-4">

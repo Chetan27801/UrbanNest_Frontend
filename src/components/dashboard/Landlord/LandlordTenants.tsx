@@ -2,12 +2,9 @@ import UserCard from "@/components/common/UserCard";
 import { useInfiniteUsers } from "@/services/userService";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import type { User } from "@/types/auth";
 
 const LandlordTenants = () => {
 	const limit = 10;
-	const [usersData, setUsersData] = useState<User[]>([]);
 	const {
 		data: users,
 		isLoading,
@@ -16,19 +13,22 @@ const LandlordTenants = () => {
 		isError,
 	} = useInfiniteUsers(limit);
 
-	useEffect(() => {
-		setUsersData((prev) => {
-			if (users?.pages[0]?.users !== undefined) {
-				return [...prev, ...users.pages[users.pages.length - 1].users];
-			}
-			return prev;
-		});
-	}, [users?.pages]);
+	// Flatten all pages into a single array
+	const allUsers = users?.pages.flatMap((page) => page.users) || [];
+	console.log(allUsers);
 
 	if (isError) {
 		return (
 			<div className="flex justify-center items-center h-full">
 				<p className="text-red-500">Error fetching users</p>
+			</div>
+		);
+	}
+
+	if (allUsers.length === 0) {
+		return (
+			<div className="flex items-center h-full">
+				<p className="text-slate-500">No tenants found</p>
 			</div>
 		);
 	}
@@ -40,7 +40,7 @@ const LandlordTenants = () => {
 					<Loader2 className="w-4 h-4 animate-spin" />
 				</div>
 			) : (
-				usersData?.map((user) => <UserCard key={user.id} user={user} />)
+				allUsers.map((user) => <UserCard key={user.id} user={user} />)
 			)}
 			{hasNextPage && (
 				<div className="flex justify-center items-center">

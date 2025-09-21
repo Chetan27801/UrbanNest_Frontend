@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
 	profileSchema,
-	profileSchemaWithImages,
 	type ProfileFormData,
 	type ProfileFormDataWithImages,
 } from "@/schema/profile.schema";
@@ -27,6 +26,9 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useUpdateProfile } from "@/services/userService";
 import { uploadFile } from "@/utils/uploadFile";
+import toast from "react-hot-toast";
+import { queryClient } from "@/lib/queryClient";
+import type { ErrorResponse } from "@/types/error";
 
 interface ProfileProps {
 	className?: string;
@@ -95,17 +97,32 @@ const ProfileForm: React.FC<ProfileProps> = ({ className }) => {
 					user?.id || "users",
 					"avatars"
 				);
-				parsed = profileSchemaWithImages.parse({
+				parsed = {
 					...changedData,
-					avatar: imageUrl,
-				});
+					avatar: imageUrl.url,
+				};
 			} else {
-				parsed = profileSchema.parse(changedData);
-			}	
-			console.log("Parsed data:", parsed);
-			await updateProfile(parsed as ProfileFormDataWithImages);
+				parsed = {
+					...changedData,
+				};
+			}
+
+			updateProfile(parsed as ProfileFormDataWithImages, {
+				onSuccess: () => {
+					queryClient.invalidateQueries({ queryKey: ["user"] });
+					toast.success("Profile updated successfully.");
+				},
+				onError: (error: unknown) => {
+					const errorMessage =
+						error instanceof Error && "message" in error
+							? (error as ErrorResponse)?.message
+							: "Failed to update profile";
+					toast.error(errorMessage);
+					console.error(error);
+				},
+			});
 		} else {
-			console.log("🤷 No changes to submit.");
+			toast.error("No changes to submit.");
 		}
 	};
 

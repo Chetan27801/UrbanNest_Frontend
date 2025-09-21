@@ -15,10 +15,27 @@ export interface Application {
 	updatedAt: Date;
 }
 
+export interface Pagination {
+	page: number;
+	totalPages: number;
+	totalItems: number;
+	hasNextPage: boolean;
+	hasPreviousPage: boolean;
+	limit: number;
+}
+
 export interface ApplicationResponse {
 	success: boolean;
 	message: string;
-	data: Application[];
+	applications: Application[];
+	pagination: Pagination;
 }
 
-
+export interface ApplicationStatusResponse {
+	success: boolean;
+	message: string;
+	data: {
+		hasApplied: boolean;
+		application: Application | null;
+	};
+}

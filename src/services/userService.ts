@@ -13,18 +13,24 @@ import { useAppDispatch, useAuth } from "@/hooks";
 import type { ProfileFormData } from "@/types/auth";
 
 // API Functions
-const userApiFunctions = {
+
+export const userApiFunctions = {
 	getProfile: async (): Promise<User> => {
-		const response = await api.get<User>(API_ENDPOINTS.USERS.GET_PROFILE);
-		return response.data;
+		const response = await api.get<{
+			success: boolean;
+			message: string;
+			user: User;
+		}>(API_ENDPOINTS.USERS.GET_PROFILE);
+		return response.data.user;
 	},
 
 	updateProfile: async (userData: ProfileFormData): Promise<User> => {
-		const response = await api.put<User>(
-			API_ENDPOINTS.USERS.UPDATE_PROFILE,
-			userData
-		);
-		return response.data;
+		const response = await api.put<{
+			success: boolean;
+			message: string;
+			user: User;
+		}>(API_ENDPOINTS.USERS.UPDATE_PROFILE, userData);
+		return response.data.user;
 	},
 
 	uploadAvatar: async (formData: FormData): Promise<{ avatar: string }> => {
@@ -47,6 +53,12 @@ const userApiFunctions = {
 	getUsers: async (page: number, limit: number): Promise<GetUsersResponse> => {
 		const response = await api.get<GetUsersResponse>(
 			API_ENDPOINTS.USERS.GET_ALL_USERS(page, limit)
+		);
+		return response.data;
+	},
+	getUserById: async (id: string): Promise<User> => {
+		const response = await api.get<User>(
+			API_ENDPOINTS.USERS.GET_USER_BY_ID(id)
 		);
 		return response.data;
 	},

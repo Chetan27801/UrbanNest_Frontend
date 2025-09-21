@@ -9,15 +9,13 @@ import { Calendar } from "../ui/calendar";
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 
-const DatePicker = ({
-	date,
-	setDate,
-	label,
-}: {
+interface DatePickerProps {
 	date: Date | undefined;
 	setDate: (date: Date | undefined) => void;
 	label: string;
-}) => {
+}
+
+const DatePicker = ({ date, setDate, label }: DatePickerProps) => {
 	const [open, setOpen] = useState(false);
 
 	return (

@@ -1,19 +1,20 @@
 import {
 	Building2Icon,
 	BuildingIcon,
-	CreditCardIcon,
-	DollarSignIcon,
+	// CreditCardIcon,
+	// DollarSignIcon,
 	HomeIcon,
 	EyeIcon,
-	HeartIcon,
-	Monitor,
+	// HeartIcon,
 	PawPrintIcon,
 	SettingsIcon,
 	TreesIcon,
 	TvIcon,
 	UsersIcon,
 	CarIcon,
-	PlusIcon,
+	FileTextIcon,
+	MonitorSmartphone,
+	FilePlusIcon,
 } from "lucide-react";
 
 import { FaSwimmingPool } from "react-icons/fa";
@@ -30,13 +31,14 @@ import { IoCellular } from "react-icons/io5";
 import AdminUser from "@/components/dashboard/Admin/AdminUser";
 import AdminProperties from "@/components/dashboard/Admin/AdminProperties";
 import AdminSetting from "@/components/dashboard/Admin/AdminSetting";
+import AdminDashboardOverview from "@/components/dashboard/Admin/AdminDashboardOverview";
 
 //Tenant
-import TenantFavorites from "@/components/dashboard/Tenant/TenantFavorites";
+// import TenantFavorites from "@/components/dashboard/Tenant/TenantFavorites";
 import TenantApplications from "@/components/dashboard/Tenant/TenantApplications";
 import TenantResidence from "@/components/dashboard/Tenant/TenantResidence";
-import TenantBillingHistory from "@/components/dashboard/Tenant/TenantBillingHistory";
-import TenantPayment from "@/components/dashboard/Tenant/TenantPayment";
+// import TenantBillingHistory from "@/components/dashboard/Tenant/TenantBillingHistory";
+// import TenantPayment from "@/components/dashboard/Tenant/TenantPayment";
 import TenantSetting from "@/components/dashboard/Tenant/TenantSetting";
 
 //Landlord
@@ -46,24 +48,32 @@ import LandlordTenants from "@/components/dashboard/Landlord/LandlordTenants";
 import LandlordSetting from "@/components/dashboard/Landlord/LandlordSetting";
 import LandlordProperties from "@/components/dashboard/Landlord/LandlordProperties";
 import LandlordCreateProperty from "@/components/dashboard/Landlord/LandlordCreateProperty";
+import LandlordLease from "@/components/dashboard/Landlord/LandlordLease";
 
 const ADMIN_DASHBOARD_LIST = [
 	{
 		id: "1",
+		title: "Dashboard",
+		icon: <HomeIcon />,
+		component: <AdminDashboardOverview />,
+		url: "/admin/dashboard",
+	},
+	{
+		id: "2",
 		title: "Users",
 		icon: <UsersIcon />,
 		component: <AdminUser />,
 		url: "/admin/users",
 	},
 	{
-		id: "2",
+		id: "3",
 		title: "Properties",
 		icon: <HomeIcon />,
 		component: <AdminProperties />,
 		url: "/admin/properties",
 	},
 	{
-		id: "3",
+		id: "4",
 		title: "Settings",
 		icon: <SettingsIcon />,
 		component: <AdminSetting />,
@@ -72,17 +82,17 @@ const ADMIN_DASHBOARD_LIST = [
 ];
 
 const TENANT_DASHBOARD_LIST = [
-	{
-		id: "1",
-		title: "Favorites",
-		icon: <HeartIcon />,
-		component: <TenantFavorites />,
-		url: "/tenant/favorites",
-	},
+	// {
+	// 	id: "1",
+	// 	title: "Favorites",
+	// 	icon: <HeartIcon />,
+	// 	component: <TenantFavorites />,
+	// 	url: "/tenant/favorites",
+	// },
 	{
 		id: "2",
 		title: "Applications",
-		icon: <Monitor />,
+		icon: <MonitorSmartphone />,
 		component: <TenantApplications />,
 		url: "/tenant/applications",
 	},
@@ -93,20 +103,20 @@ const TENANT_DASHBOARD_LIST = [
 		component: <TenantResidence />,
 		url: "/tenant/residence",
 	},
-	{
-		id: "4",
-		title: "Billing History",
-		icon: <DollarSignIcon />,
-		component: <TenantBillingHistory />,
-		url: "/tenant/billing-history",
-	},
-	{
-		id: "5",
-		title: "Payment Methods",
-		icon: <CreditCardIcon />,
-		component: <TenantPayment />,
-		url: "/tenant/payment-methods",
-	},
+	// {
+	// 	id: "4",
+	// 	title: "Billing History",
+	// 	icon: <DollarSignIcon />,
+	// 	component: <TenantBillingHistory />,
+	// 	url: "/tenant/billing-history",
+	// },
+	// {
+	// 	id: "5",
+	// 	title: "Payment Methods",
+	// 	icon: <CreditCardIcon />,
+	// 	component: <TenantPayment />,
+	// 	url: "/tenant/payment-methods",
+	// },
 	{
 		id: "6",
 		title: "Settings",
@@ -127,7 +137,7 @@ const LANDLORD_DASHBOARD_LIST = [
 	{
 		id: "2",
 		title: "Applications",
-		icon: <Monitor />,
+		icon: <MonitorSmartphone />,
 		component: <LandlordApplications />,
 		url: "/landlord/applications",
 	},
@@ -141,12 +151,19 @@ const LANDLORD_DASHBOARD_LIST = [
 	{
 		id: "4",
 		title: "Create Property",
-		icon: <PlusIcon />,
+		icon: <FilePlusIcon />,
 		component: <LandlordCreateProperty />,
 		url: "/landlord/create-property",
 	},
 	{
 		id: "5",
+		title: "Lease",
+		icon: <FileTextIcon />,
+		component: <LandlordLease />,
+		url: "/landlord/lease",
+	},
+	{
+		id: "6",
 		title: "Settings",
 		icon: <SettingsIcon />,
 		component: <LandlordSetting />,

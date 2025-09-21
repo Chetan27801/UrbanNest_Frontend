@@ -26,6 +26,7 @@ export const api = axios.create({
 	headers: {
 		"Content-Type": "application/json",
 	},
+	withCredentials: true, // Enable credentials for CORS
 });
 
 // Request interceptor - proactive token validation
@@ -55,6 +56,13 @@ api.interceptors.response.use(
 		if (error.response?.status === 401) {
 			smartLogout();
 		}
+
+		// Handle CORS errors
+		if (error.code === "ERR_NETWORK" || error.message?.includes("CORS")) {
+			console.error("CORS Error detected:", error);
+			toast.error("Network error: Please check your connection");
+		}
+
 		return Promise.reject(error);
 	}
 );

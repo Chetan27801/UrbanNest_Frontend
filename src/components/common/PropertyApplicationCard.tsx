@@ -21,6 +21,11 @@ import {
 	TooltipTrigger,
 } from "../ui/tooltip";
 import { useNavigate } from "react-router-dom";
+import { useUpdateApplication } from "@/services/applicationService";
+import { toast } from "react-hot-toast";
+import { QUERY_KEYS, queryClient } from "@/lib/queryClient";
+import type { ErrorResponse } from "@/types/error";
+import type { Lease } from "@/types/lease";
 
 const PropertyApplicationCard = ({
 	application,
@@ -38,6 +43,46 @@ const PropertyApplicationCard = ({
 			default:
 				return "bg-amber-100 text-amber-800 border-amber-300";
 		}
+	};
+
+	const { mutate: updateApplication } = useUpdateApplication(application._id);
+
+	const handleStatusChange = (value: string) => {
+		const status =
+			value === "approve"
+				? ApplicationStatus.Approved
+				: ApplicationStatus.Rejected;
+
+		const leaseDetails: Partial<Lease> = {
+			startDate: new Date(),
+			endDate: new Date(
+				new Date().setMonth(
+					new Date().getMonth() + application.property.minLeaseTerm
+				)
+			),
+			rent: application.property.pricePerMonth,
+			deposit: application.property.securityDeposit,
+		};
+
+		updateApplication(
+			{ status, leaseDetails },
+			{
+				onSuccess: () => {
+					queryClient.invalidateQueries({
+						queryKey: QUERY_KEYS.applications.all,
+					});
+					toast.success("Application status updated successfully");
+				},
+				onError: (error: unknown) => {
+					const errorMessage =
+						error instanceof Error && "message" in error
+							? (error as ErrorResponse)?.message
+							: "Failed to update application status";
+					toast.error(errorMessage);
+					console.error(error);
+				},
+			}
+		);
 	};
 
 	return (
@@ -150,7 +195,7 @@ const PropertyApplicationCard = ({
 						</Button>
 						<Select
 							onValueChange={(value) => {
-								console.log(value);
+								handleStatusChange(value);
 							}}
 						>
 							<SelectTrigger className=" bg-slate-50 text-slate-700">

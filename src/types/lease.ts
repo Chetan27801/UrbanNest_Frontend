@@ -1,3 +1,4 @@
+import type { LeaseStatus } from "@/utils/enums";
 import type { Application } from "./application";
 import type { User } from "./auth";
 import type { Property } from "./property";
@@ -12,7 +13,19 @@ export interface Lease {
 	tenant: User;
 	landlord: User;
 	application: Application;
-	isActive: boolean;
+	isActive: LeaseStatus;
 	createdAt: Date;
 	updatedAt: Date;
+}
+
+export interface LeaseResponse {
+	leases: Lease[];
+	pagination: {
+		page: number;
+		totalPages: number;
+		totalItems: number;
+		hasNextPage: boolean;
+		hasPreviousPage: boolean;
+		limit: number;
+	};
 }

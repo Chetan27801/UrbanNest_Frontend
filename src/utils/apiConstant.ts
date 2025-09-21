@@ -24,6 +24,10 @@ const API_ENDPOINTS = {
 		UPLOAD_AVATAR: `${API_BASE_URL}/users/upload-avatar`,
 		GET_AVATAR: `${API_BASE_URL}/users/get-avatar`,
 		DELETE_AVATAR: `${API_BASE_URL}/users/delete-avatar`,
+		GET_FAVORITE_PROPERTIES: (page: number, limit: number) =>
+			`${API_BASE_URL}/users/favorite-properties?page=${page}&limit=${limit}`,
+		TOGGLE_FAVORITE: (propertyId: string) =>
+			`${API_BASE_URL}/properties/toggle-favorite/${propertyId}`,
 	},
 
 	// Property management endpoints
@@ -44,7 +48,16 @@ const API_ENDPOINTS = {
 	APPLICATIONS: {
 		APPLY: (propertyId: string) =>
 			`${API_BASE_URL}/applications/apply/${propertyId}`,
-		GET_ALL_APPLICATIONS_BY_LANDLORD: `${API_BASE_URL}/applications/get-all-applications-by-landlord`,
+		CHECK_STATUS: (propertyId: string) =>
+			`${API_BASE_URL}/applications/check-status/${propertyId}`,
+		GET_ALL_APPLICATIONS: (page: number, limit: number) =>
+			`${API_BASE_URL}/applications/get-all-applications?page=${page}&limit=${limit}`,
+		GET_ALL_APPLICATIONS_BY_LANDLORD: (
+			page: number,
+			limit: number,
+			status: string
+		) =>
+			`${API_BASE_URL}/applications/get-all-applications-by-landlord/${status}?page=${page}&limit=${limit}`,
 		GET_APPLICATION_BY_ID: (id: string) =>
 			`${API_BASE_URL}/applications/get-application/${id}`,
 		UPDATE_APPLICATION: (id: string) =>
@@ -54,18 +67,21 @@ const API_ENDPOINTS = {
 	// Lease management endpoints
 	LEASES: {
 		CREATE: `${API_BASE_URL}/leases/create-lease`,
-		GET_ALL: `${API_BASE_URL}/leases/all-leases`,
+		GET_ALL: (page: number, limit: number, status: string) =>
+			`${API_BASE_URL}/leases/all-leases/${status}?page=${page}&limit=${limit}`,
 		GET_BY_ID: (id: string) => `${API_BASE_URL}/leases/get-lease/${id}`,
 		TERMINATE: (id: string) => `${API_BASE_URL}/leases/terminate-lease/${id}`,
 	},
 
 	// Payment management endpoints
 	PAYMENTS: {
-		GET_BY_LEASE_ID: (leaseId: string) =>
-			`${API_BASE_URL}/payments/get-payments/lease/${leaseId}`,
-		CREATE: `${API_BASE_URL}/payments/create-payment`,
+		GET_BY_LEASE_ID: (leaseId: string, status: string) =>
+			`${API_BASE_URL}/payments/get-payments/lease/${leaseId}/${status}`,
+		CREATE_PAYMENT: `${API_BASE_URL}/payments/create-payment`,
+		CAPTURE_PAYMENT: `${API_BASE_URL}/payments/capture-payment`,
 		GET_BY_ID: (id: string) => `${API_BASE_URL}/payments/get-payment/${id}`,
-		GET_HISTORY: `${API_BASE_URL}/payments/get-payment-history`,
+		GET_HISTORY: (status: string) =>
+			`${API_BASE_URL}/payments/get-payment-history/${status}`,
 	},
 
 	// Chat/messaging endpoints
@@ -99,6 +115,12 @@ const API_ENDPOINTS = {
 			OVERVIEW: `${API_BASE_URL}/stats/tenant/overview`,
 			PAYMENTS: `${API_BASE_URL}/stats/tenant/payments`,
 		},
+
+		//Public stats
+		PUBLIC: {
+			PROPERTY_DATA_FOR_HOME: (type: string) =>
+				`${API_BASE_URL}/stats/property/data-for-home/${type}`,
+		},
 	},
 
 	// Media endpoints
@@ -106,6 +128,14 @@ const API_ENDPOINTS = {
 		GENERATE_PRESIGNED_URL: `${API_BASE_URL}/media/generate-presigned-url`,
 		GET_MEDIA_URL: (key: string) =>
 			`${API_BASE_URL}/media/media-url/${encodeURIComponent(key)}`,
+	},
+
+	// PDF endpoints
+	PDF: {
+		GENERATE_LEASE_AGREEMENT_PDF: (leaseId: string) =>
+			`${API_BASE_URL}/pdf/lease/${leaseId}/agreement/download`,
+		PREVIEW_LEASE_AGREEMENT_PDF: (leaseId: string) =>
+			`${API_BASE_URL}/pdf/lease/${leaseId}/agreement/preview`,
 	},
 };
 
@@ -117,20 +147,28 @@ export const createApiUrl = {
 	deleteProperty: (id: string) => API_ENDPOINTS.PROPERTIES.DELETE(id),
 	applyForProperty: (propertyId: string) =>
 		API_ENDPOINTS.APPLICATIONS.APPLY(propertyId),
+	checkApplicationStatus: (propertyId: string) =>
+		API_ENDPOINTS.APPLICATIONS.CHECK_STATUS(propertyId),
 	getApplicationById: (id: string) =>
 		API_ENDPOINTS.APPLICATIONS.GET_APPLICATION_BY_ID(id),
 	updateApplication: (id: string) =>
 		API_ENDPOINTS.APPLICATIONS.UPDATE_APPLICATION(id),
 	getLeaseById: (id: string) => API_ENDPOINTS.LEASES.GET_BY_ID(id),
 	terminateLease: (id: string) => API_ENDPOINTS.LEASES.TERMINATE(id),
-	getPaymentsByLeaseId: (leaseId: string) =>
-		API_ENDPOINTS.PAYMENTS.GET_BY_LEASE_ID(leaseId),
+	getPaymentsByLeaseId: (leaseId: string, status: string) =>
+		API_ENDPOINTS.PAYMENTS.GET_BY_LEASE_ID(leaseId, status),
 	getPaymentById: (id: string) => API_ENDPOINTS.PAYMENTS.GET_BY_ID(id),
 	getMessages: (conversationId: string) =>
 		API_ENDPOINTS.CHAT.GET_MESSAGES(conversationId),
 	markAsRead: (conversationId: string) =>
 		API_ENDPOINTS.CHAT.MARK_AS_READ(conversationId),
 	verifyLandlord: (id: string) => API_ENDPOINTS.STATS.ADMIN.VERIFY_LANDLORD(id),
+	getFavoriteProperties: (page: number, limit: number) =>
+		API_ENDPOINTS.USERS.GET_FAVORITE_PROPERTIES(page, limit),
+	toggleFavorite: (propertyId: string) =>
+		API_ENDPOINTS.USERS.TOGGLE_FAVORITE(propertyId),
+	getPropertyDataForHome: (type: string) =>
+		API_ENDPOINTS.STATS.PUBLIC.PROPERTY_DATA_FOR_HOME(type),
 };
 
 export default API_ENDPOINTS;
