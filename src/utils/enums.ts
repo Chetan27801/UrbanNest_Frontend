@@ -91,6 +91,40 @@ export const LeaseStatus = {
 } as const;
 export type LeaseStatus = (typeof LeaseStatus)[keyof typeof LeaseStatus];
 
+// --- UserStatus ---
+export const UserStatus = {
+	Online: "Online",
+	Away: "Away",
+	Busy: "Busy",
+	Offline: "Offline",
+} as const;
+export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus];
+
+// --- ConnectionStatus ---
+export const ConnectionStatus = {
+	Connected: "Connected",
+	Disconnected: "Disconnected",
+	Connecting: "Connecting",
+	Error: "Error",
+} as const;
+export type ConnectionStatus =
+	(typeof ConnectionStatus)[keyof typeof ConnectionStatus];
+
+// --- BroadcastType ---
+export const BroadcastType = {
+	SocketIO: "socket",
+	REST: "rest",
+} as const;
+export type BroadcastType = (typeof BroadcastType)[keyof typeof BroadcastType];
+
+// --- BroadcastStatus ---
+export const BroadcastStatus = {
+	Attempted: "Attempted",
+	Skipped: "Skipped",
+} as const;
+export type BroadcastStatus =
+	(typeof BroadcastStatus)[keyof typeof BroadcastStatus];
+
 // This helper function now works perfectly with no errors
 export const getEnumValues = <T extends Record<string, string>>(
 	enumObject: T

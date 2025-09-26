@@ -6,9 +6,12 @@ import { FaSwimmingPool } from "react-icons/fa";
 import type { Property } from "@/types/property";
 import { Amenity } from "@/utils/enums";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import ChatButton from "@/components/chat/ChatButton";
 
 const PropertyCard = ({ property }: { property: Property }) => {
 	const navigate = useNavigate();
+	const { user } = useAuth();
 
 	return (
 		<Card
@@ -54,6 +57,19 @@ const PropertyCard = ({ property }: { property: Property }) => {
 							</span>
 						</div>
 					</div>
+					{/* Chat Button for Tenants */}
+					{user && user.role === "tenant" && (
+						<div className="mt-3" onClick={(e) => e.stopPropagation()}>
+							<ChatButton
+								otherUserId={property.landlord._id}
+								otherUserName={property.landlord.name}
+								otherUserRole="landlord"
+								variant="outline"
+								size="sm"
+								className="w-full"
+							/>
+						</div>
+					)}
 				</div>
 			</CardHeader>
 		</Card>

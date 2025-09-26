@@ -11,6 +11,7 @@ import {
 	Receipt,
 	Loader2,
 	Trash2,
+	MessageCircle,
 } from "lucide-react";
 import { format } from "date-fns";
 import { useTerminateLease } from "@/services/leaseService";
@@ -19,6 +20,8 @@ import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { LeaseStatus } from "@/utils/enums";
 import PdfDownloadButton from "./PdfDownloadButton";
+import ChatButton from "@/components/chat/ChatButton";
+import { useAuth } from "@/hooks/useAuth";
 
 interface LeaseCardProps {
 	lease: Lease;
@@ -27,6 +30,7 @@ interface LeaseCardProps {
 
 const LeaseCard = ({ lease, isTenant = false }: LeaseCardProps) => {
 	const navigate = useNavigate();
+	const { user } = useAuth();
 	const { mutate: terminateLease, isPending: isTerminatingLease } =
 		useTerminateLease();
 	const formatCurrency = (amount: number) => {
@@ -239,6 +243,56 @@ const LeaseCard = ({ lease, isTenant = false }: LeaseCardProps) => {
 						</div>
 					)}
 					<div className="flex gap-3">
+						{/* Chat Button - Show based on user role */}
+						{user && (
+							<>
+								{/* Tenant can chat with landlord */}
+								{user.role === "tenant" && (
+									<ChatButton
+										otherUserId={lease.landlord._id}
+										otherUserName={lease.landlord.name}
+										otherUserRole="landlord"
+										variant="outline"
+										size="sm"
+									/>
+								)}
+								{/* Landlord can chat with tenant */}
+								{user.role === "landlord" && (
+									<ChatButton
+										otherUserId={lease.tenant._id}
+										otherUserName={lease.tenant.name}
+										otherUserRole="tenant"
+										variant="outline"
+										size="sm"
+									/>
+								)}
+								{/* Admin can chat with both landlord and tenant */}
+								{user.role === "admin" && (
+									<>
+										<ChatButton
+											otherUserId={lease.landlord._id}
+											otherUserName={lease.landlord.name}
+											otherUserRole="landlord"
+											variant="outline"
+											size="sm"
+										>
+											<MessageCircle className="h-4 w-4" />
+											Chat Landlord
+										</ChatButton>
+										<ChatButton
+											otherUserId={lease.tenant._id}
+											otherUserName={lease.tenant.name}
+											otherUserRole="tenant"
+											variant="outline"
+											size="sm"
+										>
+											<MessageCircle className="h-4 w-4" />
+											Chat Tenant
+										</ChatButton>
+									</>
+								)}
+							</>
+						)}
 						<Button
 							variant="outline"
 							size="sm"

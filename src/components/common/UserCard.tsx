@@ -4,6 +4,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { Mail, Phone, CheckCircle, ShieldAlert } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import ChatButton from "@/components/chat/ChatButton";
+import { useAuth } from "@/hooks/useAuth";
 
 interface UserWithTotalProperties extends User {
 	totalProperties?: number;
@@ -15,9 +17,26 @@ interface UserCardProps {
 }
 
 const UserCard = ({ user, isTenant }: UserCardProps) => {
+	const { user: currentUser } = useAuth();
 	const verificationClasses = user.isVerified
 		? "border-green-300 bg-green-50 text-green-700"
 		: "border-yellow-300 bg-yellow-50 text-yellow-700";
+
+	// Determine if chat button should be shown
+	const shouldShowChat = () => {
+		if (!currentUser || currentUser.id === user.id) return false;
+
+		// Admin can chat with anyone
+		if (currentUser.role === "admin") return true;
+
+		// Landlord can chat with tenants
+		if (currentUser.role === "landlord" && user.role === "tenant") return true;
+
+		// Tenant can chat with landlords
+		if (currentUser.role === "tenant" && user.role === "landlord") return true;
+
+		return false;
+	};
 
 	return (
 		<Card className="w-full p-4 transition-all duration-300 border-slate-200 hover:shadow-lg hover:border-blue-300 cursor-pointer">
@@ -82,14 +101,27 @@ const UserCard = ({ user, isTenant }: UserCardProps) => {
 						</p>
 					)}
 
-					<p className="text-xs text-slate-400 mt-3 text-right">
-						Last active:{" "}
-						{user.lastActive
-							? formatDistanceToNow(new Date(user.lastActive), {
-									addSuffix: true,
-							  })
-							: "N/A"}
-					</p>
+					<div className="flex items-center justify-between mt-3">
+						<p className="text-xs text-slate-400">
+							Last active:{" "}
+							{user.lastActive
+								? formatDistanceToNow(new Date(user.lastActive), {
+										addSuffix: true,
+								  })
+								: "N/A"}
+						</p>
+
+						{/* Chat Button */}
+						{shouldShowChat() && (
+							<ChatButton
+								otherUserId={user.id}
+								otherUserName={user.name}
+								otherUserRole={user?.role || ""}
+								variant="outline"
+								size="sm"
+							/>
+						)}
+					</div>
 				</div>
 			</div>
 		</Card>

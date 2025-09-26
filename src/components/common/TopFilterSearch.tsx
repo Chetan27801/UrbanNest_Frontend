@@ -12,7 +12,7 @@ import { PropertyType } from "@/utils/enums";
 import DatePicker from "./DatePicker";
 // import { Separator } from "../ui/separator";
 import type { PropertySearchFilters } from "@/types/property";
-import { useDebounce } from "@/hooks/useDebounce";
+// import { useDebounce } from "@/hooks/useDebounce";
 import { useEffect, useState } from "react";
 
 const TopFilterSearch = ({
@@ -43,7 +43,7 @@ const TopFilterSearch = ({
 }) => {
 	// local input for search to avoid double updates
 	const [searchInput, setSearchInput] = useState(filters.search);
-	const debouncedSearch = useDebounce(searchInput, 1000);
+	// const debouncedSearch = useDebounce(searchInput, 1000);
 
 	// keep local input in sync when parent changes (e.g., via URL)
 	useEffect(() => {
@@ -51,9 +51,21 @@ const TopFilterSearch = ({
 	}, [filters.search]);
 
 	// update the search filter when the debounced search changes
-	useEffect(() => {
-		updateFilter("search", debouncedSearch);
-	}, [debouncedSearch, updateFilter]);
+	// useEffect(() => {
+	// 	updateFilter("search", debouncedSearch);
+	// }, [debouncedSearch, updateFilter]);
+
+	// handle search button click
+	const handleSearch = () => {
+		updateFilter("search", searchInput);
+	};
+
+	// handle enter key press
+	const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === "Enter") {
+			handleSearch();
+		}
+	};
 
 	return (
 		<div className="flex flex-col lg:flex-row p-4 w-full items-start lg:items-center gap-4 bg-white">
@@ -82,9 +94,16 @@ const TopFilterSearch = ({
 						placeholder="Search properties..."
 						value={searchInput}
 						onChange={(e) => setSearchInput(e.target.value)}
-						className="focus-visible:ring-1 transition-all duration-200 focus:scale-[1.02]"
+						onKeyUp={handleKeyPress}
+						className="focus-visible:ring-1 transition-all duration-200 focus:scale-[1.02] pr-12"
 					/>
-					<SearchIcon className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-gray-500" />
+					<Button
+						variant="ghost"
+						onClick={handleSearch}
+						className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 hover:bg-gray-100 transition-colors duration-200"
+					>
+						<SearchIcon className="w-4 h-4 text-gray-500 hover:text-gray-700 animate-pulse" />
+					</Button>
 				</div>
 			</div>
 

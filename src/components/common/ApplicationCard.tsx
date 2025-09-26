@@ -1,23 +1,9 @@
 import type { Application } from "@/types/application";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ApplicationStatus } from "@/utils/enums";
 import { Calendar, MapPin, MessageSquare } from "lucide-react";
 
 const ApplicationCard = ({ application }: { application: Application }) => {
-	// Helper function to get status badge variant
-	const getStatusVariant = (status: ApplicationStatus) => {
-		switch (status) {
-			case ApplicationStatus.Approved:
-				return "success"; // Green-ish
-			case ApplicationStatus.Rejected:
-				return "destructive"; // Red
-			case ApplicationStatus.Pending:
-				return "secondary"; // Gray
-			default:
-				return "outline";
-		}
-	};
 
 	// Format date
 	const formatDate = (date: Date) => {
@@ -44,7 +30,7 @@ const ApplicationCard = ({ application }: { application: Application }) => {
 					<CardTitle className="text-lg font-semibold line-clamp-1">
 						{application.property.name}
 					</CardTitle>
-					<Badge variant={getStatusVariant(application.status)}>
+					<Badge variant="outline">
 						{application.status}
 					</Badge>
 				</div>

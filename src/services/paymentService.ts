@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { api } from "@/utils/apiAxios";
 import { QUERY_KEYS } from "@/lib/queryClient";
 import API_CONSTANT from "@/utils/apiConstant";
@@ -70,6 +70,11 @@ export const paymentApiFunctions = {
 			throw error;
 		}
 	},
+
+	getTotalPayments: async () => {
+		const response = await api.get(API_CONSTANT.STATS.LANDLORD.TOTAL_PAYMENTS);
+		return response.data.data;
+	},
 };
 
 export const useGetPaymentsByLease = (
@@ -121,5 +126,12 @@ export const useCreatePayment = () => {
 export const useCapturePayment = (paymentId: string, orderId: string) => {
 	return useMutation({
 		mutationFn: () => paymentApiFunctions.capturePayment(paymentId, orderId),
+	});
+};
+
+export const useGetTotalPayments = () => {
+	return useQuery({
+		queryKey: QUERY_KEYS.stats.landlord.totalPayments,
+		queryFn: () => paymentApiFunctions.getTotalPayments(),
 	});
 };

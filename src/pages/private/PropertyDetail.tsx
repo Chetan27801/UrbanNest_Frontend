@@ -23,6 +23,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ApplicationForm from "@/components/forms/ApplicationForm";
+import ChatButton from "@/components/chat/ChatButton";
 
 const PropertyDetail = () => {
 	const { id } = useParams<{ id: string }>();
@@ -287,13 +288,17 @@ const PropertyDetail = () => {
 										</p>
 									</div>
 								)}
-								<Button
-									size="lg"
-									variant="outline"
-									className="w-full cursor-pointer"
-								>
-									Message
-								</Button>
+								{/* Chat Button - Only show for tenants or other landlords */}
+								{user && user.role === "tenant" && (
+									<ChatButton
+										otherUserId={landlord._id}
+										otherUserName={landlord.name}
+										otherUserRole="landlord"
+										variant="outline"
+										size="lg"
+										className="w-full"
+									/>
+								)}
 								<Separator />
 								<div className="space-y-2 text-sm">
 									<div className="flex justify-between">

@@ -74,6 +74,11 @@ export const QUERY_KEYS = {
 	chat: {
 		conversations: ["chat", "conversations"],
 		messages: (conversationId: string) => ["chat", "messages", conversationId],
+		sendMessage: (conversationId: string) => [
+			"chat",
+			"send-message",
+			conversationId,
+		],
 		unreadCount: ["chat", "unread-count"],
 	},
 	stats: {
@@ -84,11 +89,17 @@ export const QUERY_KEYS = {
 		landlord: {
 			overview: ["stats", "landlord", "overview"],
 			financials: ["stats", "landlord", "financials"],
+			totalPayments: ["stats", "landlord", "total-payments"],
 		},
 		tenant: {
 			overview: ["stats", "tenant", "overview"],
 			payments: ["stats", "tenant", "payments"],
 		},
-		propertyDataForHome: (type: string) => ["stats", "property", "data-for-home", type],
+		propertyDataForHome: (type: string) => [
+			"stats",
+			"property",
+			"data-for-home",
+			type,
+		],
 	},
 } as const;

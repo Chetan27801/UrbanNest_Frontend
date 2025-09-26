@@ -89,8 +89,8 @@ const API_ENDPOINTS = {
 		START_CONVERSATION: `${API_BASE_URL}/chat/conversation`,
 		GET_CONVERSATIONS: `${API_BASE_URL}/chat/all-conversations`,
 		SEND_MESSAGE: `${API_BASE_URL}/chat/send-message`,
-		GET_MESSAGES: (conversationId: string) =>
-			`${API_BASE_URL}/chat/conversation/messages/${conversationId}`,
+		GET_MESSAGES: (conversationId: string, page: number, limit: number) =>
+			`${API_BASE_URL}/chat/conversation/messages/${conversationId}?page=${page}&limit=${limit}`,
 		MARK_AS_READ: (conversationId: string) =>
 			`${API_BASE_URL}/chat/mark-as-read/${conversationId}`,
 		GET_UNREAD_COUNT: `${API_BASE_URL}/chat/unread-count`,
@@ -109,6 +109,7 @@ const API_ENDPOINTS = {
 		LANDLORD: {
 			OVERVIEW: `${API_BASE_URL}/stats/landlord/overview`,
 			FINANCIALS: `${API_BASE_URL}/stats/landlord/financials`,
+			TOTAL_PAYMENTS: `${API_BASE_URL}/stats/total-payments`,
 		},
 		// Tenant stats
 		TENANT: {
@@ -158,8 +159,8 @@ export const createApiUrl = {
 	getPaymentsByLeaseId: (leaseId: string, status: string) =>
 		API_ENDPOINTS.PAYMENTS.GET_BY_LEASE_ID(leaseId, status),
 	getPaymentById: (id: string) => API_ENDPOINTS.PAYMENTS.GET_BY_ID(id),
-	getMessages: (conversationId: string) =>
-		API_ENDPOINTS.CHAT.GET_MESSAGES(conversationId),
+	getMessages: (conversationId: string, page: number, limit: number) =>
+		API_ENDPOINTS.CHAT.GET_MESSAGES(conversationId, page, limit),
 	markAsRead: (conversationId: string) =>
 		API_ENDPOINTS.CHAT.MARK_AS_READ(conversationId),
 	verifyLandlord: (id: string) => API_ENDPOINTS.STATS.ADMIN.VERIFY_LANDLORD(id),

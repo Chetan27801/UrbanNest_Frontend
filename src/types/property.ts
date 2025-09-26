@@ -30,6 +30,7 @@ export interface Property {
 		};
 	};
 	landlord: {
+		_id: string;
 		name: string;
 		email: string;
 		phoneNumber: string;

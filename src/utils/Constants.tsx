@@ -157,7 +157,7 @@ const LANDLORD_DASHBOARD_LIST = [
 	},
 	{
 		id: "5",
-		title: "Lease",
+		title: "Leases",
 		icon: <FileTextIcon />,
 		component: <LandlordLease />,
 		url: "/landlord/lease",

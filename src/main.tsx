@@ -9,14 +9,17 @@ import { Provider } from "react-redux";
 import { store, persistor } from "@/store";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import AppToast from "./components/common/AppToast";
+import { ChatProvider } from "./contexts/ChatContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
 		<Provider store={store}>
 			<PersistGate loading={<div>Loading...</div>} persistor={persistor}>
 				<QueryClientProvider client={queryClient}>
-					<App />
-					<AppToast />
+					<ChatProvider>
+						<App />
+						<AppToast />
+					</ChatProvider>
 					<ReactQueryDevtools initialIsOpen={false} />
 				</QueryClientProvider>
 			</PersistGate>

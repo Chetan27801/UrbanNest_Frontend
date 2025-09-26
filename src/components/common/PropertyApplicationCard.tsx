@@ -25,6 +25,8 @@ import { useUpdateApplication } from "@/services/applicationService";
 import { toast } from "react-hot-toast";
 import { QUERY_KEYS, queryClient } from "@/lib/queryClient";
 import type { ErrorResponse } from "@/types/error";
+import ChatButton from "@/components/chat/ChatButton";
+import { useAuth } from "@/hooks/useAuth";
 import type { Lease } from "@/types/lease";
 
 const PropertyApplicationCard = ({
@@ -33,6 +35,7 @@ const PropertyApplicationCard = ({
 	application: Application;
 }) => {
 	const navigate = useNavigate();
+	const { user } = useAuth();
 	const getStatusClasses = (status: ApplicationStatus) => {
 		switch (status) {
 			case ApplicationStatus.Approved:
@@ -186,13 +189,27 @@ const PropertyApplicationCard = ({
 					)}
 
 					<div className="flex flex-row justify-between items-center">
-						<Button
-							className="cursor-pointer"
-							variant="default"
-							onClick={() => navigate(`/property/${application.property._id}`)}
-						>
-							View Property
-						</Button>
+						<div className="flex gap-2">
+							<Button
+								className="cursor-pointer"
+								variant="default"
+								onClick={() =>
+									navigate(`/property/${application.property._id}`)
+								}
+							>
+								View Property
+							</Button>
+							{/* Chat Button - Landlord can chat with tenant applicant */}
+							{user && (user.role === "landlord" || user.role === "admin") && (
+								<ChatButton
+									otherUserId={application.tenant.id}
+									otherUserName={application.tenant.name}
+									otherUserRole="tenant"
+									variant="outline"
+									size="default"
+								/>
+							)}
+						</div>
 						<Select
 							onValueChange={(value) => {
 								handleStatusChange(value);

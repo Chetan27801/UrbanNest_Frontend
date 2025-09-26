@@ -3,8 +3,10 @@ import { useGetAllLeases } from "@/services/leaseService";
 import { LeaseStatus } from "@/utils/enums";
 import type { Lease } from "@/types/lease";
 import LeaseCard from "@/components/common/LeaseCard";
-import { Loader2 } from "lucide-react";
+import { Loader2, DollarSign, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useGetTotalPayments } from "@/services/paymentService";
 
 const LandlordLease = () => {
 	const {
@@ -26,6 +28,8 @@ const LandlordLease = () => {
 		hasNextPage: hasNextPageTerminatedLeases,
 	} = useGetAllLeases(10, LeaseStatus.Terminated);
 
+	const { data: totalPayments } = useGetTotalPayments();
+
 	const allLeasesData = allLeases?.pages.flatMap((page) => page.leases);
 	const activeLeasesData = activeLeases?.pages.flatMap((page) => page.leases);
 	const terminatedLeasesData = terminatedLeases?.pages.flatMap(
@@ -34,7 +38,43 @@ const LandlordLease = () => {
 
 	return (
 		<div className="flex flex-col gap-4 w-full p-4">
-			<h1 className="text-2xl font-bold">Applications</h1>
+			<h1 className="text-2xl font-bold">Leases</h1>
+			{/* Payment Statistics Cards */}
+			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+				<Card className="hover:shadow-lg transition-shadow duration-300">
+					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+						<CardTitle className="text-sm font-medium text-gray-600">
+							Total Payments
+						</CardTitle>
+						<DollarSign className="h-5 w-5 text-green-600" />
+					</CardHeader>
+					<CardContent>
+						<div className="text-2xl font-bold text-gray-900">
+							Rs.{totalPayments?.totalPayments?.toLocaleString() || "0"}
+						</div>
+						<p className="text-xs text-gray-500 mt-1">
+							All-time revenue from leases
+						</p>
+					</CardContent>
+				</Card>
+
+				<Card className="hover:shadow-lg transition-shadow duration-300">
+					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+						<CardTitle className="text-sm font-medium text-gray-600">
+							This Month
+						</CardTitle>
+						<Calendar className="h-5 w-5 text-blue-600" />
+					</CardHeader>
+					<CardContent>
+						<div className="text-2xl font-bold text-gray-900">
+							Rs.{totalPayments?.totalPaymentThisMonth?.toLocaleString() || "0"}
+						</div>
+						<p className="text-xs text-gray-500 mt-1">
+							Revenue for current month
+						</p>
+					</CardContent>
+				</Card>
+			</div>
 			<Tabs defaultValue="viewAll" className="w-full">
 				<TabsList>
 					<TabsTrigger value="viewAll" className="w-full cursor-pointer">
