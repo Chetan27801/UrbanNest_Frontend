@@ -71,16 +71,50 @@ export const useStartConversation = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: chatApiFunctions.startConversation,
-		onSuccess: () => {
+		mutationFn: (otherUserId: string) =>
+			chatApiFunctions.startConversation({ otherUserId }),
+		onSuccess: (data, otherUserId) => {
+			// Update conversations cache immediately
 			queryClient.invalidateQueries({
 				queryKey: QUERY_KEYS.chat.conversations,
 			});
-			toast.success("Conversation started!");
+
+			// Optionally set the conversation data directly in cache to avoid refetch
+			queryClient.setQueryData(
+				QUERY_KEYS.chat.conversations,
+				(oldData: any) => {
+					console.log("==============================");
+					console.log(oldData, "oldData");
+					console.log("==============================");
+					if (!oldData) return oldData;
+
+					// Check if conversation already exists to avoid duplicates
+					const existingConv = oldData.conversations?.find(
+						(conv: Conversation) =>
+							conv.participants.some((p: User) => p.id === otherUserId)
+					);
+
+					if (existingConv) return oldData;
+
+					// Add new conversation to the list
+					return {
+						...oldData,
+						conversations: [
+							data.conversation,
+							...(oldData.conversations || []),
+						],
+					};
+				}
+			);
+
+			console.log("✅ Conversation started successfully");
 		},
 		onError: (error) => {
+			console.error("❌ Failed to start conversation:", error);
 			toast.error(error.message || "Failed to start conversation");
 		},
+		// Prevent duplicate requests for the same users
+		// mutationKey: (otherUserId: string) => ["startConversation", otherUserId],
 	});
 };
 
@@ -89,6 +123,35 @@ export const useConversations = () => {
 		queryKey: QUERY_KEYS.chat.conversations,
 		queryFn: chatApiFunctions.getConversations,
 		staleTime: 1 * 60 * 1000,
+	});
+};
+
+export const useConversationWithUser = (
+	otherUserId: string,
+	enabled: boolean = true
+) => {
+	const queryClient = useQueryClient();
+
+	return useQuery({
+		queryKey: QUERY_KEYS.chat.conversationWithUser(otherUserId),
+		queryFn: async () => {
+			console.log("🚀 Creating/getting conversation with user:", otherUserId);
+			const data = await chatApiFunctions.startConversation({ otherUserId });
+
+			console.log("✅ Conversation ready:", data.conversation._id);
+
+			// Update the conversations list cache
+			queryClient.invalidateQueries({
+				queryKey: QUERY_KEYS.chat.conversations,
+			});
+
+			return data;
+		},
+		enabled: enabled && !!otherUserId,
+		staleTime: Infinity, // Cache conversations forever (they don't change)
+		gcTime: 24 * 60 * 60 * 1000, // Keep in cache for 24 hours
+		retry: 3,
+		throwOnError: false, // Handle errors gracefully
 	});
 };
 

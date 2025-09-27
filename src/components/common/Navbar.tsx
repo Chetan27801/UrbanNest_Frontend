@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { MdChatBubbleOutline, MdNotificationsActive } from "react-icons/md";
+import { MdNotificationsActive } from "react-icons/md";
 import { Button } from "../ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -88,11 +88,11 @@ const Navbar = () => {
 				{/* Chat, Notification and Profile Buttons - after login */}
 				{isAuthenticated && (
 					<div className="flex items-center gap-4">
-						<div className="text-white p-2 rounded-full hover:text-white/80 hover:bg-white/10 border border-white/20 hover:border-white/30 transition-all duration-300">
+						{/* <div className="text-white p-2 rounded-full hover:text-white/80 hover:bg-white/10 border border-white/20 hover:border-white/30 transition-all duration-300">
 							<Link to="/chat">
 								<MdChatBubbleOutline className="w-5 h-5" />
 							</Link>
-						</div>
+						</div> */}
 						<div className="text-white p-2 rounded-full hover:text-white/80 hover:bg-white/10 border border-white/20 hover:border-white/30 transition-all duration-300">
 							<Link to="/notification">
 								<MdNotificationsActive className="w-5 h-5" />

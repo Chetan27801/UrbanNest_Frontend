@@ -1,5 +1,5 @@
 export interface User {
-	id: string;
+	_id: string; //change karna hai id se
 	email: string;
 	name: string;
 	role?: string;

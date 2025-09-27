@@ -28,5 +28,10 @@
 			"@/*": ["./src/*"]
 		}
 	},
-	"include": ["src", "../tmp/examples", "../tmp/auth", "../ChatExample.tsx"]
+	"include": [
+		"src",
+		"../tmp/examples",
+		"../tmp/auth",
+		"src/components/chat/ChatExample.tsx"
+	]
 }

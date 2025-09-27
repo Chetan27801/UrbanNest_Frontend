@@ -20,6 +20,7 @@ import "leaflet/dist/leaflet.css";
 import AuthCallbackPage from "./pages/auth/AuthCallbackPage";
 import PaymentSuccess from "./pages/private/PaymentSuccess";
 import PaymentCancel from "./pages/private/PaymentCancel";
+import NotificationPage from "./pages/private/Notification";
 
 function App() {
 	// Automatic token validation
@@ -42,6 +43,7 @@ function App() {
 						<Route path="/deals" element={<DealsPage />} />
 						<Route path="/search" element={<SearchPage />} />
 						<Route path="/property/:id" element={<PropertyDetail />} />
+						<Route path="/notification" element={<NotificationPage />} />
 					</Route>
 				</Route>
 

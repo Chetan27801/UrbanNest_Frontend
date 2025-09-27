@@ -73,6 +73,11 @@ export const QUERY_KEYS = {
 	},
 	chat: {
 		conversations: ["chat", "conversations"],
+		conversationWithUser: (otherUserId: string) => [
+			"chat",
+			"conversation-with-user",
+			otherUserId,
+		],
 		messages: (conversationId: string) => ["chat", "messages", conversationId],
 		sendMessage: (conversationId: string) => [
 			"chat",

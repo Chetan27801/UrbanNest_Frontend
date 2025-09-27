@@ -101,13 +101,18 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 		setLastError(null);
 	}, []);
 
-	//Connectiokn management
+	//Connection management
 	useEffect(() => {
 		if (user && token) {
+			console.log(
+				"🔌 ChatContext: Initializing socket connection for user:",
+				user.id
+			);
 			setConnectionStatus(ConnectionStatus.Connecting);
 			socketService.connect();
 			setupSocketListeners();
 		} else {
+			console.log("🔌 ChatContext: No user/token, disconnecting socket");
 			socketService.disconnect();
 			setConnectionStatus(ConnectionStatus.Disconnected);
 			setIsConnected(false);
@@ -123,19 +128,31 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 		//Connection events
 
 		socketService.socket?.on("connect", () => {
+			console.log("🔌 ChatContext: Socket connected successfully");
 			setIsConnected(true);
 			setConnectionStatus(ConnectionStatus.Connected);
 			setLastError(null);
 		});
 
 		socketService.socket?.on("disconnect", () => {
+			console.log("🔌 ChatContext: Socket disconnected");
 			setIsConnected(false);
 			setConnectionStatus(ConnectionStatus.Disconnected);
 		});
 
-		socketService.socket?.on("connect_error", (error: Error) => {
+		socketService.socket?.on("connect_error", (error: any) => {
+			console.error("🔌 ChatContext: Socket connection error:", error);
 			setConnectionStatus(ConnectionStatus.Error);
 			setLastError(error.message || "Connection error");
+		});
+
+		socketService.socket?.on("connected", (data: any) => {
+			console.log("🔌 ChatContext: Received connected event:", data);
+		});
+
+		socketService.socket?.on("error", (error: any) => {
+			console.error("🔌 ChatContext: Socket error:", error);
+			setLastError(error.message || "Socket error");
 		});
 
 		//Chat events

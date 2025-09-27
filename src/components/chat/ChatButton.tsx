@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
-import ChatModal from "./ChatModal";
+import ChatModal from "@/components/chat/ChatModal";
 
 interface ChatButtonProps {
 	otherUserId: string;

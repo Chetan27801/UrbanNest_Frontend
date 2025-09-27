@@ -20,7 +20,12 @@ class SocketService {
 			return;
 		}
 
-		this.socket = io(import.meta.env.VITE_SOCKET_URL, {
+		// Use backend URL if VITE_SOCKET_URL is not defined
+		const socketUrl =
+			import.meta.env.VITE_SOCKET_URL || "http://localhost:8000";
+		console.log("🔌 Connecting to socket server:", socketUrl);
+
+		this.socket = io(socketUrl, {
 			auth: {
 				token,
 			},
@@ -36,25 +41,39 @@ class SocketService {
 	private setupEventListeners() {
 		if (!this.socket) return;
 		const userId = store.getState().auth.user?.id;
+
 		this.socket.on("connect", () => {
-			if (!this.socket) return;
-			this.socket?.emit("joinRoom", userId);
+			console.log("🔌 Socket connected, joining room for user:", userId);
+			if (!this.socket || !userId) return;
+
+			// Send joinRoom event with correct data structure
+			this.socket.emit("joinRoom", {
+				type: "chat",
+				event: "joinRoom",
+				data: {
+					userId: userId,
+				},
+			});
 		});
 
 		this.socket.on("disconnect", (reason: string) => {
-			console.log("Disconnected from socket", reason);
+			console.log("🔌 Disconnected from socket:", reason);
 			this.isConnecting = false;
 			this.socket = null;
 		});
 
-		this.socket.on("connect_error", (error: string) => {
-			console.error("Connection error", error);
+		this.socket.on("connect_error", (error: any) => {
+			console.error("🔌 Connection error:", error);
 			this.isConnecting = false;
 			this.socket = null;
 		});
 
 		this.socket.on("connected", (data: unknown) => {
-			console.log("Connected to socket", data);
+			console.log("✅ Connected to socket server:", data);
+		});
+
+		this.socket.on("error", (error: any) => {
+			console.error("🔌 Socket error:", error);
 		});
 	}
 
@@ -74,7 +93,12 @@ class SocketService {
 		receiver: string;
 		content: string;
 	}) {
-		this.socket?.emit("sendMessage", data);
+		console.log("📤 Sending message via socket:", data);
+		this.socket?.emit("sendMessage", {
+			type: "chat",
+			event: "sendMessage",
+			data: data,
+		});
 	}
 
 	onNewMessage(callback: (data: unknown) => void) {
