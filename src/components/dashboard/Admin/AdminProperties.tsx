@@ -2,7 +2,8 @@ import { useInfiniteProperties } from "@/services/propertyService";
 import PropertyCard from "@/components/common/PropertyCard";
 import { Button } from "@/components/ui/button";
 import type { Property } from "@/types/property";
-import { ArrowDownIcon, Loader2 } from "lucide-react";
+import { ArrowDownIcon } from "lucide-react";
+import { NormalLoader } from "@/components/common/Loader";
 
 const AdminProperties = () => {
 	const limit = 10;
@@ -22,7 +23,7 @@ const AdminProperties = () => {
 		<div className="container mx-auto p-6">
 			{isLoading ? (
 				<div className="flex justify-center items-center h-full">
-					<Loader2 className="w-4 h-4 animate-spin" />
+					<NormalLoader />
 				</div>
 			) : (
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

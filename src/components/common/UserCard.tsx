@@ -24,7 +24,7 @@ const UserCard = ({ user, isTenant }: UserCardProps) => {
 
 	// Determine if chat button should be shown
 	const shouldShowChat = () => {
-		if (!currentUser || currentUser.id === user.id) return false;
+		if (!currentUser || currentUser._id === user._id) return false;
 
 		// Admin can chat with anyone
 		if (currentUser.role === "admin") return true;
@@ -114,7 +114,7 @@ const UserCard = ({ user, isTenant }: UserCardProps) => {
 						{/* Chat Button */}
 						{shouldShowChat() && (
 							<ChatButton
-								otherUserId={user.id}
+								otherUserId={user._id}
 								otherUserName={user.name}
 								otherUserRole={user?.role || ""}
 								variant="outline"

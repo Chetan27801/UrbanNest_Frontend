@@ -2,7 +2,7 @@ import { useGetAllApplicationsByLandlord } from "@/services/applicationService";
 import PropertyApplicationCard from "@/components/common/PropertyApplicationCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ApplicationStatus } from "@/utils/enums";
-import { Loader2 } from "lucide-react";
+import { NormalLoader } from "@/components/common/Loader";
 import { Button } from "@/components/ui/button";
 
 const LandlordApplications = () => {
@@ -66,7 +66,7 @@ const LandlordApplications = () => {
 				<TabsContent value="viewAll">
 					{isLoadingAllApplications ? (
 						<div className="flex justify-center items-center h-full">
-							<Loader2 className="w-4 h-4 animate-spin" />
+							<NormalLoader />
 						</div>
 					) : viewAllApplications?.length === 0 ? (
 						<div className="flex flex-col gap-4">
@@ -96,7 +96,7 @@ const LandlordApplications = () => {
 				<TabsContent value="pending">
 					{isLoadingPendingApplications ? (
 						<div className="flex justify-center items-center h-full">
-							<Loader2 className="w-4 h-4 animate-spin" />
+							<NormalLoader />
 						</div>
 					) : viewPendingApplications?.length === 0 ? (
 						<div className="flex flex-col gap-4">
@@ -126,7 +126,7 @@ const LandlordApplications = () => {
 				<TabsContent value="rejected">
 					{isLoadingRejectedApplications ? (
 						<div className="flex justify-center items-center h-full">
-							<Loader2 className="w-4 h-4 animate-spin" />
+							<NormalLoader />
 						</div>
 					) : viewRejectedApplications?.length === 0 ? (
 						<div className="flex flex-col gap-4">
@@ -156,7 +156,7 @@ const LandlordApplications = () => {
 				<TabsContent value="approved">
 					{isLoadingApprovedApplications ? (
 						<div className="flex justify-center items-center h-full">
-							<Loader2 className="w-4 h-4 animate-spin" />
+							<NormalLoader />
 						</div>
 					) : viewApprovedApplications?.length === 0 ? (
 						<div className="flex flex-col gap-4">

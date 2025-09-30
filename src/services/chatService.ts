@@ -82,16 +82,13 @@ export const useStartConversation = () => {
 			// Optionally set the conversation data directly in cache to avoid refetch
 			queryClient.setQueryData(
 				QUERY_KEYS.chat.conversations,
-				(oldData: any) => {
-					console.log("==============================");
-					console.log(oldData, "oldData");
-					console.log("==============================");
+				(oldData: Conversation[]) => {
 					if (!oldData) return oldData;
 
 					// Check if conversation already exists to avoid duplicates
-					const existingConv = oldData.conversations?.find(
+					const existingConv = oldData?.find(
 						(conv: Conversation) =>
-							conv.participants.some((p: User) => p.id === otherUserId)
+							conv.participants.some((p: User) => p._id === otherUserId)
 					);
 
 					if (existingConv) return oldData;
@@ -101,17 +98,15 @@ export const useStartConversation = () => {
 						...oldData,
 						conversations: [
 							data.conversation,
-							...(oldData.conversations || []),
+							...(oldData || []),
 						],
 					};
 				}
 			);
 
-			console.log("✅ Conversation started successfully");
 		},
 		onError: (error) => {
 			console.error("❌ Failed to start conversation:", error);
-			toast.error(error.message || "Failed to start conversation");
 		},
 		// Prevent duplicate requests for the same users
 		// mutationKey: (otherUserId: string) => ["startConversation", otherUserId],
@@ -135,10 +130,7 @@ export const useConversationWithUser = (
 	return useQuery({
 		queryKey: QUERY_KEYS.chat.conversationWithUser(otherUserId),
 		queryFn: async () => {
-			console.log("🚀 Creating/getting conversation with user:", otherUserId);
 			const data = await chatApiFunctions.startConversation({ otherUserId });
-
-			console.log("✅ Conversation ready:", data.conversation._id);
 
 			// Update the conversations list cache
 			queryClient.invalidateQueries({
@@ -188,7 +180,7 @@ export const useSendMessage = () => {
 			toast.success("Message sent!");
 		},
 		onError: (error) => {
-			toast.error(error.message || "Failed to send message");
+			console.error("Failed to send message:", error);
 		},
 	});
 };
@@ -206,7 +198,7 @@ export const useMarkAsRead = () => {
 			toast.success("Message marked as read!");
 		},
 		onError: (error) => {
-			toast.error(error.message || "Failed to mark message as read");
+			console.error("Failed to mark message as read:", error);
 		},
 	});
 };

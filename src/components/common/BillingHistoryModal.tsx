@@ -9,7 +9,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Receipt, Calendar, CreditCard } from "lucide-react";
+import { Receipt, Calendar, CreditCard } from "lucide-react";
+import { NormalLoader } from "@/components/common/Loader";
 import {
 	useCreatePayment,
 	useGetPaymentsByLease,
@@ -82,21 +83,18 @@ const BillingHistoryModal = ({
 
 	const handlePayBill = async (payment: Payment) => {
 		try {
-			console.log("Pay bill clicked for payment:", payment._id);
-
 			const response = await createPaymentMutation.mutateAsync(payment._id);
 
 			// Add cache-busting parameters to PayPal URL
 			const url = new URL(response.approvalUrl);
 			url.searchParams.append("cache_buster", Date.now().toString());
-			url.searchParams.append("user_id", user?.id || "anonymous");
+			url.searchParams.append("user_id", user?._id || "anonymous");
 
 			// Clear any PayPal-related data from browser storage
 			localStorage.removeItem("paypal");
 			sessionStorage.removeItem("paypal");
 
 			window.location.href = url.toString();
-			console.log("Payment response:", response);
 
 			// Optionally refetch payments to update the UI
 			refetch();
@@ -147,7 +145,7 @@ const BillingHistoryModal = ({
 						<ScrollArea className="h-[65vh] pr-4">
 							{isLoading ? (
 								<div className="flex justify-center items-center h-32">
-									<Loader2 className="h-6 w-6 animate-spin" />
+									<NormalLoader />
 								</div>
 							) : allPayments.length === 0 ? (
 								<div className="text-center py-8">
@@ -255,10 +253,10 @@ const BillingHistoryModal = ({
 												disabled={isFetchingNextPage}
 											>
 												{isFetchingNextPage ? (
-													<>
-														<Loader2 className="h-4 w-4 animate-spin mr-2" />
+													<div className="flex items-center gap-2">
+														<NormalLoader size="sm" />
 														Loading...
-													</>
+													</div>
 												) : (
 													"Load More"
 												)}

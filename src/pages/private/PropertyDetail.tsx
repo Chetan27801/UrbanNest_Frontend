@@ -31,7 +31,6 @@ const PropertyDetail = () => {
 	const { user } = useAuth();
 	const { data: applicationStatus, isLoading: isCheckingStatus } =
 		useCheckApplicationStatus(user?.role === "tenant" ? (id as string) : "");
-	console.log(property);
 
 	// A simple mapping for amenities to icons
 	const amenityIcons: { [key: string]: React.ReactNode } = {

@@ -9,10 +9,10 @@ import {
 	Phone,
 	Mail,
 	Receipt,
-	Loader2,
 	Trash2,
 	MessageCircle,
 } from "lucide-react";
+import { NormalLoader } from "@/components/common/Loader";
 import { format } from "date-fns";
 import { useTerminateLease } from "@/services/leaseService";
 import BillingHistoryModal from "./BillingHistoryModal";
@@ -233,7 +233,7 @@ const LeaseCard = ({ lease, isTenant = false }: LeaseCardProps) => {
 									onClick={() => terminateLease(lease._id)}
 								>
 									{isTerminatingLease ? (
-										<Loader2 className="h-4 w-4 animate-spin" />
+										<NormalLoader size="sm" />
 									) : (
 										<Trash2 className="h-4 w-4" />
 									)}

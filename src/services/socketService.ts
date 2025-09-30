@@ -1,13 +1,30 @@
-import io, { Socket } from "socket.io-client";
+import io from "socket.io-client";
+import type { Socket } from "socket.io-client";
 import { store } from "@/store";
 import toast from "react-hot-toast";
 import { UserStatus } from "@/utils/enums";
+import type {
+	SocketMessage,
+	SendTypingData,
+	JoinRoomData,
+	Message,
+	MessageAck,
+	MessageError,
+	TypingData,
+	MarkAsReadAck,
+	MarkAsReadError,
+	MessageRead,
+	UserStatusUpdate,
+	ConnectionResponse,
+	SocketError,
+	ConnectError,
+} from "@/types/chat";
 
 class SocketService {
 	socket: typeof Socket | null = null;
 	isConnecting = false;
 
-	connect() {
+	connect(): void {
 		if (this.socket?.connected || this.isConnecting) return;
 
 		this.isConnecting = true;
@@ -23,7 +40,6 @@ class SocketService {
 		// Use backend URL if VITE_SOCKET_URL is not defined
 		const socketUrl =
 			import.meta.env.VITE_SOCKET_URL || "http://localhost:8000";
-		console.log("🔌 Connecting to socket server:", socketUrl);
 
 		this.socket = io(socketUrl, {
 			auth: {
@@ -38,46 +54,46 @@ class SocketService {
 		this.isConnecting = false;
 	}
 
-	private setupEventListeners() {
+	private setupEventListeners(): void {
 		if (!this.socket) return;
-		const userId = store.getState().auth.user?.id;
+		const userId = store.getState().auth.user?._id;
 
 		this.socket.on("connect", () => {
-			console.log("🔌 Socket connected, joining room for user:", userId);
 			if (!this.socket || !userId) return;
 
 			// Send joinRoom event with correct data structure
-			this.socket.emit("joinRoom", {
+			const joinData: JoinRoomData = {
 				type: "chat",
-				event: "joinRoom",
+				event: "joinRoom" as const,
 				data: {
 					userId: userId,
 				},
-			});
+			};
+			this.socket.emit("joinRoom", joinData);
 		});
 
 		this.socket.on("disconnect", (reason: string) => {
-			console.log("🔌 Disconnected from socket:", reason);
+			toast.error(`Socket disconnected: ${reason}`);
 			this.isConnecting = false;
 			this.socket = null;
 		});
 
-		this.socket.on("connect_error", (error: any) => {
+		this.socket.on("connect_error", (error: ConnectError) => {
 			console.error("🔌 Connection error:", error);
 			this.isConnecting = false;
 			this.socket = null;
 		});
 
-		this.socket.on("connected", (data: unknown) => {
-			console.log("✅ Connected to socket server:", data);
+		this.socket.on("connected", (data: ConnectionResponse) => {
+			toast.success(data.message);
 		});
 
-		this.socket.on("error", (error: any) => {
+		this.socket.on("error", (error: SocketError) => {
 			console.error("🔌 Socket error:", error);
 		});
 	}
 
-	disconnect() {
+	disconnect(): void {
 		if (this.socket) {
 			this.socket.disconnect();
 			this.socket = null;
@@ -85,73 +101,99 @@ class SocketService {
 		}
 	}
 
-	//message handling
-
-	sendMessage(data: {
-		conversationId: string;
-		sender: string;
-		receiver: string;
-		content: string;
-	}) {
-		console.log("📤 Sending message via socket:", data);
-		this.socket?.emit("sendMessage", {
-			type: "chat",
-			event: "sendMessage",
-			data: data,
-		});
+	// Message handling methods
+	sendMessage(data: SocketMessage): void {
+		if (!this.socket?.connected) {
+			console.warn("🔌 Cannot send message: Socket not connected");
+			return;
+		}
+		this.socket.emit("sendMessage", data);
 	}
 
-	onNewMessage(callback: (data: unknown) => void) {
+	onNewMessage(callback: (data: Message) => void): void {
 		this.socket?.on("newMessage", callback);
 	}
 
-	onMessageAck(callback: (data: unknown) => void) {
+	onMessageAck(callback: (data: MessageAck) => void): void {
 		this.socket?.on("messageAck", callback);
 	}
 
-	onMessageError(callback: (data: unknown) => void) {
+	onMessageError(callback: (data: MessageError) => void): void {
 		this.socket?.on("messageError", callback);
 	}
 
-	//typing indicator
-	sendTyping(data: {
-		conversationId: string;
-		sender: string;
-		receiver: string;
-		isTyping: boolean;
-	}) {
-		this.socket?.emit("typing", data);
+	// Typing indicator methods
+	sendTyping(data: SendTypingData): void {
+		if (!this.socket?.connected) {
+			console.warn("🔌 Cannot send typing indicator: Socket not connected");
+			return;
+		}
+		this.socket.emit("typing", data);
 	}
 
-	onTyping(callback: (data: unknown) => void) {
+	onTyping(callback: (data: TypingData) => void): void {
 		this.socket?.on("typing", callback);
 	}
 
-	//mark as read
-	markAsRead(conversationId: string) {
-		this.socket?.emit("markAsRead", { conversationId });
+	// Mark as read methods
+	markAsRead(conversationId: string): void {
+		if (!this.socket?.connected) {
+			console.warn("🔌 Cannot mark as read: Socket not connected");
+			return;
+		}
+		this.socket.emit("markAsRead", { conversationId });
 	}
 
-	onMessageRead(callback: (data: unknown) => void) {
+	onMarkAsReadAck(callback: (data: MarkAsReadAck) => void): void {
+		this.socket?.on("markAsReadAck", callback);
+	}
+
+	onMarkAsReadError(callback: (data: MarkAsReadError) => void): void {
+		this.socket?.on("markAsReadError", callback);
+	}
+
+	onMessageRead(callback: (data: MessageRead) => void): void {
 		this.socket?.on("messageRead", callback);
 	}
 
-	//update status
-	updateStatus(status: UserStatus) {
-		this.socket?.emit("updateStatus", { status });
+	// Status update methods
+	updateStatus(status: UserStatus): void {
+		if (!this.socket?.connected) {
+			console.warn("🔌 Cannot update status: Socket not connected");
+			return;
+		}
+		this.socket.emit("updateStatus", { status });
 	}
 
-	onUserStatusUpdate(callback: (data: unknown) => void) {
+	onUserStatusUpdate(callback: (data: UserStatusUpdate) => void): void {
 		this.socket?.on("userStatusUpdate", callback);
 	}
 
-	//remove listeners
-	removeAllListeners() {
+	// Connection event listeners
+	onConnected(callback: (data: ConnectionResponse) => void): void {
+		this.socket?.on("connected", callback);
+	}
+
+	onError(callback: (data: SocketError) => void): void {
+		this.socket?.on("error", callback);
+	}
+
+	onConnectError(callback: (data: ConnectError) => void): void {
+		this.socket?.on("connect_error", callback);
+	}
+
+	// Utility methods
+	removeAllListeners(): void {
 		this.socket?.removeAllListeners();
 	}
 
-	isConnected() {
+	isConnected(): boolean {
 		return this.socket?.connected || false;
+	}
+
+	// Get socket instance for advanced usage
+	getSocket(): typeof Socket | null {
+		return this.socket;
 	}
 }
 

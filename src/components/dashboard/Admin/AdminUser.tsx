@@ -1,7 +1,7 @@
 import { useInfiniteUsers } from "@/services/userService";
-import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import UserCard from "@/components/common/UserCard";
+import { NormalLoader } from "@/components/common/Loader";
 
 const AdminUser = () => {
 	const limit = 10;
@@ -28,10 +28,10 @@ const AdminUser = () => {
 		<div className="flex flex-col gap-4 w-full p-4">
 			{isLoading ? (
 				<div className="flex justify-center items-center h-full">
-					<Loader2 className="w-4 h-4 animate-spin" />
+					<NormalLoader />
 				</div>
 			) : (
-				allUsers.map((user) => <UserCard key={user.id} user={user} />)
+				allUsers.map((user) => <UserCard key={user._id} user={user} />)
 			)}
 			{hasNextPage && (
 				<div className="flex justify-center items-center">

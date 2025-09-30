@@ -45,6 +45,7 @@ const API_ENDPOINTS = {
 	},
 
 	// Application management endpoints
+
 	APPLICATIONS: {
 		APPLY: (propertyId: string) =>
 			`${API_BASE_URL}/applications/apply/${propertyId}`,

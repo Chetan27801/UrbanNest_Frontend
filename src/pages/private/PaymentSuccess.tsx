@@ -4,7 +4,8 @@ import { PaymentSuccessState } from "@/utils/enums";
 import { useState } from "react";
 import api from "@/utils/apiAxios";
 import API_CONSTANT from "@/utils/apiConstant";
-import { Check, Loader2, X } from "lucide-react";
+import { Check, X } from "lucide-react";
+import { NormalLoader } from "@/components/common/Loader";
 
 const PaymentSuccess = () => {
 	const [searchParams] = useSearchParams();
@@ -25,12 +26,6 @@ const PaymentSuccess = () => {
 				const orderId = searchParams.get("token");
 				const payerId = searchParams.get("PayerID");
 
-				console.log("Processing payment capture:", {
-					paymentId,
-					orderId,
-					payerId,
-				});
-
 				if (!paymentId || !orderId || !payerId) {
 					setStatus(PaymentSuccessState.Failed);
 					return;
@@ -40,10 +35,6 @@ const PaymentSuccess = () => {
 					paymentId,
 					orderId,
 				});
-
-				console.log("=====================================");
-				console.log(response);
-				console.log("=====================================");
 
 				setStatus(PaymentSuccessState.Success);
 
@@ -69,7 +60,7 @@ const PaymentSuccess = () => {
 		return (
 			<div className="flex items-center justify-center min-h-screen">
 				<div className="text-center">
-					<Loader2 className="h-8 w-8 animate-pulse mx-auto mb-4" />
+					<NormalLoader size="lg" />
 					<p className="mt-4 text-lg">Processing your payment...</p>
 				</div>
 			</div>

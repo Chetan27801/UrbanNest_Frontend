@@ -7,7 +7,7 @@ import PropertyListings from "@/components/common/PropertyListings";
 
 import { useInfinitePropertySearch } from "@/services/propertyService";
 import { useSearchFilters } from "@/hooks/useSearchFilters";
-import Loader from "@/components/common/Loader";
+import { NormalLoader } from "@/components/common/Loader";
 
 const SearchPage = () => {
 	const {
@@ -42,7 +42,11 @@ const SearchPage = () => {
 
 	//handle the loading state
 	if (isLoading) {
-		return <Loader />;
+		return (
+			<div className="flex justify-center items-center h-screen">
+				<NormalLoader />
+			</div>
+		);
 	}
 
 	return (

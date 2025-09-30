@@ -20,7 +20,6 @@ export async function uploadFile(
 			}
 		);
 
-		console.log("Pre-signed URL response:", presignedResponse);
 
 		// Step 2: Upload directly to S3 using the pre-signed URL
 		// Use a clean axios instance without interceptors
@@ -35,7 +34,6 @@ export async function uploadFile(
 			API_ENDPOINTS.MEDIA.GET_MEDIA_URL(presignedResponse.key)
 		);
 
-		console.log("S3 URL response:", s3UrlResponse.data);
 
 		return {
 			url: s3UrlResponse.data.url,

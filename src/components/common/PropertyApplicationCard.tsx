@@ -202,7 +202,7 @@ const PropertyApplicationCard = ({
 							{/* Chat Button - Landlord can chat with tenant applicant */}
 							{user && (user.role === "landlord" || user.role === "admin") && (
 								<ChatButton
-									otherUserId={application.tenant.id}
+									otherUserId={application.tenant._id}
 									otherUserName={application.tenant.name}
 									otherUserRole="tenant"
 									variant="outline"

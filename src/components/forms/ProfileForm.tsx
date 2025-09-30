@@ -94,7 +94,7 @@ const ProfileForm: React.FC<ProfileProps> = ({ className }) => {
 			if (changedData.avatar) {
 				const imageUrl = await uploadFile(
 					data.avatar as File,
-					user?.id || "users",
+					user?._id || "users",
 					"avatars"
 				);
 				parsed = {

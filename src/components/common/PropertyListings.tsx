@@ -3,7 +3,8 @@ import { cn } from "@/lib/utils";
 import PropertyCard from "./PropertyCard";
 import type { Property } from "@/types/property";
 import { Button } from "../ui/button";
-import { ArrowDownIcon, Loader2 } from "lucide-react";
+import { ArrowDownIcon } from "lucide-react";
+import { NormalLoader } from "./Loader";
 
 const PropertyListings = ({
 	className,
@@ -72,10 +73,10 @@ const PropertyListings = ({
 									variant="outline"
 								>
 									{isFetchingNextPage ? (
-										<>
-											<Loader2 className="w-4 h-4 animate-spin" />
+										<div className="flex items-center gap-2">
+											<NormalLoader size="sm" />
 											Loading...
-										</>
+										</div>
 									) : (
 										<>
 											Load More Properties

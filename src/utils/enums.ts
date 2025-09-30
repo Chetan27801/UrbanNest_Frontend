@@ -119,8 +119,8 @@ export type BroadcastType = (typeof BroadcastType)[keyof typeof BroadcastType];
 
 // --- BroadcastStatus ---
 export const BroadcastStatus = {
-	Attempted: "Attempted",
-	Skipped: "Skipped",
+	Attempted: "attempted",
+	Skipped: "skipped",
 } as const;
 export type BroadcastStatus =
 	(typeof BroadcastStatus)[keyof typeof BroadcastStatus];

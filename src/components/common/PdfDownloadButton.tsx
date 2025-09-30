@@ -1,7 +1,8 @@
-import { Download, Loader2 } from "lucide-react";
+import { Download } from "lucide-react";
 import { useLeaseAgreementPDF } from "@/services/pdfService";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
+import { NormalLoader } from "./Loader";
 
 const PdfDownloadButton = ({
 	className,
@@ -20,7 +21,7 @@ const PdfDownloadButton = ({
 			disabled={isDownloading}
 		>
 			{isDownloading ? (
-				<Loader2 className="h-4 w-4 animate-spin" />
+				<NormalLoader size="sm" />
 			) : (
 				<Download className="h-4 w-4" />
 			)}

@@ -9,7 +9,7 @@ import { Provider } from "react-redux";
 import { store, persistor } from "@/store";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import AppToast from "./components/common/AppToast";
-import { ChatProvider } from "./contexts/ChatContext.tsx";
+import { ChatProvider } from "./contexts/ChatContextProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>

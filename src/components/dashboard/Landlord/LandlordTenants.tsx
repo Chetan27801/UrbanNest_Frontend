@@ -1,7 +1,7 @@
 import UserCard from "@/components/common/UserCard";
 import { useInfiniteUsers } from "@/services/userService";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { NormalLoader } from "@/components/common/Loader";
 
 const LandlordTenants = () => {
 	const limit = 10;
@@ -15,7 +15,6 @@ const LandlordTenants = () => {
 
 	// Flatten all pages into a single array
 	const allUsers = users?.pages.flatMap((page) => page.users) || [];
-	console.log(allUsers);
 
 	if (isError) {
 		return (
@@ -37,10 +36,10 @@ const LandlordTenants = () => {
 		<div className="flex flex-col gap-4 w-full p-4">
 			{isLoading ? (
 				<div className="flex justify-center items-center h-full">
-					<Loader2 className="w-4 h-4 animate-spin" />
+					<NormalLoader />
 				</div>
 			) : (
-				allUsers.map((user) => <UserCard key={user.id} user={user} />)
+				allUsers.map((user) => <UserCard key={user._id} user={user} />)
 			)}
 			{hasNextPage && (
 				<div className="flex justify-center items-center">

@@ -3,7 +3,7 @@ import { useGetAllLeases } from "@/services/leaseService";
 import { LeaseStatus } from "@/utils/enums";
 import type { Lease } from "@/types/lease";
 import LeaseCard from "@/components/common/LeaseCard";
-import { Loader2 } from "lucide-react";
+import { NormalLoader } from "@/components/common/Loader";
 import { Button } from "@/components/ui/button";
 
 const TenantResidence = () => {
@@ -50,7 +50,7 @@ const TenantResidence = () => {
 				<TabsContent value="viewAll">
 					{isLoadingAllLeases ? (
 						<div className="flex justify-center items-center h-full">
-							<Loader2 className="w-4 h-4 animate-spin" />
+							<NormalLoader />
 						</div>
 					) : allLeasesData?.length === 0 ? (
 						<div className="flex flex-col gap-4">
@@ -76,7 +76,7 @@ const TenantResidence = () => {
 				<TabsContent value="active">
 					{isLoadingActiveLeases ? (
 						<div className="flex justify-center items-center h-full">
-							<Loader2 className="w-4 h-4 animate-spin" />
+							<NormalLoader />
 						</div>
 					) : activeLeasesData?.length === 0 ? (
 						<div className="flex flex-col gap-4">
@@ -102,7 +102,7 @@ const TenantResidence = () => {
 				<TabsContent value="terminated">
 					{isLoadingTerminatedLeases ? (
 						<div className="flex justify-center items-center h-full">
-							<Loader2 className="w-4 h-4 animate-spin" />
+							<NormalLoader />
 						</div>
 					) : terminatedLeasesData?.length === 0 ? (
 						<div className="flex flex-col gap-4">

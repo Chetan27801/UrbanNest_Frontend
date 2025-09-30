@@ -2,7 +2,7 @@ import PropertyCard from "@/components/common/PropertyCard";
 import { Button } from "@/components/ui/button";
 import { useInfiniteProperties } from "@/services/propertyService";
 import type { Property } from "@/types/property";
-import Loader from "@/components/common/Loader";
+import { NormalLoader } from "@/components/common/Loader";
 
 const LandlordProperties = () => {
 	const limit = 10;
@@ -22,7 +22,7 @@ const LandlordProperties = () => {
 		<div className="container mx-auto p-6">
 			{isLoading ? (
 				<div className="flex justify-center items-center h-full">
-					<Loader />
+					<NormalLoader />
 				</div>
 			) : (
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

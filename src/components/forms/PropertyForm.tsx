@@ -30,6 +30,7 @@ import {
 	Bath,
 	Ruler,
 } from "lucide-react";
+import { NormalLoader } from "@/components/common/Loader";
 import { useAuth } from "@/hooks/useAuth";
 import {
 	createPropertySchema,
@@ -104,7 +105,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ className }) => {
 					coordinates: [0, 0] as CoordinatesTuple, // [lng, lat]
 				},
 			},
-			landlord: user?.id,
+			landlord: user?._id,
 			isAvailable: true,
 			photoUrls: [],
 		},
@@ -915,7 +916,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ className }) => {
 				</Card>
 
 				{/* Hidden Fields */}
-				<input type="hidden" {...register("landlord")} value={user?.id} />
+				<input type="hidden" {...register("landlord")} value={user?._id} />
 
 				{/* Submit Button */}
 				<div className="flex justify-end pt-6 border-t">
@@ -926,10 +927,10 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ className }) => {
 						disabled={!isDirty || isPending}
 					>
 						{isPending ? (
-							<>
-								<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+							<div className="flex items-center gap-2">
+								<NormalLoader size="sm" />
 								Creating Property...
-							</>
+							</div>
 						) : (
 							<>
 								<Save className="h-4 w-4 mr-2" />

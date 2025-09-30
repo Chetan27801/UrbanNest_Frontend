@@ -10,8 +10,9 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Send, MessageCircle } from "lucide-react";
+import { NormalLoader } from "@/components/common/Loader";
 import { useAuth } from "@/hooks/useAuth";
-import { useChatContext } from "@/contexts/ChatContext";
+import { useChatContext } from "@/hooks/useChatContext";
 import {
 	useConversationWithUser,
 	useMessages,
@@ -204,7 +205,7 @@ const ChatModal: React.FC<ChatModalProps> = ({
 					<div className="p-4">
 						{isLoading ? (
 							<div className="flex justify-center items-center h-32">
-								<div className="animate-spin rounded-full h-6 w-6 border-b-2 border-cyan-600"></div>
+								<NormalLoader size="sm" />
 							</div>
 						) : messages.length === 0 ? (
 							<div className="flex flex-col items-center justify-center h-32 text-gray-500">
@@ -279,7 +280,7 @@ const ChatModal: React.FC<ChatModalProps> = ({
 							className="rounded-full w-10 h-10 p-0 bg-cyan-500 hover:bg-cyan-600 disabled:bg-gray-300"
 						>
 							{sendMessageMutation.isPending ? (
-								<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+								<NormalLoader size="sm" />
 							) : (
 								<Send className="h-4 w-4" />
 							)}

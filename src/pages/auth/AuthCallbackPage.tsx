@@ -3,10 +3,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/store/slices/authSlice";
 import toast from "react-hot-toast";
-import { Loader2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/lib/queryClient";
 import { userApiFunctions } from "@/services/userService";
+import { NormalLoader } from "@/components/common/Loader";
 
 const AuthCallbackPage = () => {
 	const navigate = useNavigate();
@@ -56,7 +56,7 @@ const AuthCallbackPage = () => {
 	return (
 		<div className="min-h-screen flex items-center justify-center">
 			<div className="text-center">
-				<Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+				<NormalLoader size="lg" />
 			</div>
 		</div>
 	);
