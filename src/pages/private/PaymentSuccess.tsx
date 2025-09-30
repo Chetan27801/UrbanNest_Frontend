@@ -31,7 +31,7 @@ const PaymentSuccess = () => {
 					return;
 				}
 
-				const response = await api.post(API_CONSTANT.PAYMENTS.CAPTURE_PAYMENT, {
+				await api.post(API_CONSTANT.PAYMENTS.CAPTURE_PAYMENT, {
 					paymentId,
 					orderId,
 				});
